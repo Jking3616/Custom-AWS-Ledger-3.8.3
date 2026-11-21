@@ -22,8 +22,8 @@
             --gold: #ffd700;
             --est-yellow: #ffeb3b;
             --hol-work: #4a148c;
---hol-off: #b81bfc;
---vacation: #ff6f00;
+            --hol-off: #b81bfc;
+            --vacation: #ff6f00;
             --electric: #2979ff;
         }
 
@@ -56,7 +56,12 @@
         }
 
         input::placeholder {
-            color: #555;
+            color: #e0e0e0;
+            opacity: 1;
+        }
+
+        body.light-mode input::placeholder {
+            color: #444444;
             opacity: 1;
         }
 
@@ -306,6 +311,35 @@
             font-size: 15px;
         }
 
+        .pay-card.simulated {
+            border-left: 4px solid #769f82;
+        }
+
+        .pay-card.simulated .date-badge {
+            border-color: #769f82;
+            color: #769f82;
+            background: rgba(118, 159, 130, 0.12);
+        }
+
+        .pay-card.simulated .card-total {
+            color: #769f82;
+            font-size: 15px;
+        }
+
+        body.light-mode .pay-card.simulated {
+            border-left: 4px solid #4e7359 !important;
+        }
+
+        body.light-mode .pay-card.simulated .date-badge {
+            border-color: #4e7359 !important;
+            color: #4e7359 !important;
+            background: rgba(78, 115, 89, 0.14) !important;
+        }
+
+        body.light-mode .pay-card.simulated .card-total {
+            color: #4e7359 !important;
+        }
+
         .pay-card.estimated {
             border-left: 4px solid var(--est-yellow);
             box-shadow: 0 0 5px rgba(255, 235, 59, 0.1);
@@ -484,16 +518,16 @@
         }
 
         .day-card.status-vac .day-name-part {
-color: #000;
-}
+            color: #000;
+        }
 
-.day-card.hol-vac-overlap .day-date-part {
-background: var(--vacation) !important;
-color: #000 !important;
-border-top: 1px solid var(--vacation) !important;
-}
+        .day-card.hol-vac-overlap .day-date-part {
+            background: var(--vacation) !important;
+            color: #000 !important;
+            border-top: 1px solid var(--vacation) !important;
+        }
 
-.day-card.hol-unworked {
+        .day-card.hol-unworked {
             border: 2px solid var(--hol-off);
             box-shadow: 0 0 5px rgba(123, 31, 162, 0.4);
         }
@@ -2709,7 +2743,7 @@ border-top: 1px solid var(--vacation) !important;
                         </div>
                     </div>
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 5px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom: 8px;">
                     <div><span class="input-label">Bidded Job Class</span><select id="biddedRate"
                             onchange="calc(); saveSettings();" style="margin-bottom:0;">
                             <option value="5">Level 5</option>
@@ -2728,6 +2762,12 @@ border-top: 1px solid var(--vacation) !important;
                             <option value="1">Level 1</option>
                         </select></div>
                 </div>
+                <div style="margin-bottom: 5px;">
+                    <span class="input-label">Hire Date (MM/DD/YY)</span>
+                    <input type="text" id="hire-date" inputmode="numeric" maxlength="8" placeholder="MM/DD/YY"
+                        oninput="formatHireDateInput(this)" onchange="saveSettings(); updateVacSummary();"
+                        style="margin:0; font-family:monospace;">
+                </div>
             </div>
         </div>
 
@@ -2744,12 +2784,19 @@ border-top: 1px solid var(--vacation) !important;
                         PLANNER</button>
                 </div>
                 <div id="cv-current" class="contract-view-content show">
-<div id="contract-live-banner" style="display:none; background:rgba(41, 121, 255, 0.08); border:1px solid var(--accent); border-radius:8px; padding:10px; margin-bottom:10px;"></div>
-<div id="anchor-lock-bar" style="display:none; justify-content:space-between; align-items:center; margin-bottom:8px; padding:6px 8px; background:rgba(255, 179, 0, 0.08); border:1px dashed var(--warning); border-radius:6px;">
-<span id="anchor-lock-msg" style="font-size:10px; font-weight:800; color:var(--warning); letter-spacing:0.4px;">🔒 PRE-CONTRACT BASE ANCHOR</span>
-<button type="button" id="anchor-lock-btn" onclick="toggleAnchorLock()" style="background:#222; color:var(--warning); border:1px solid var(--warning); border-radius:4px; padding:3px 8px; font-size:9px; font-weight:900; font-family:monospace; cursor:pointer; white-space:nowrap;">UNLOCK ANCHOR</button>
-</div>
-<div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                    <div id="contract-live-banner"
+                        style="display:none; background:rgba(41, 121, 255, 0.08); border:1px solid var(--accent); border-radius:8px; padding:10px; margin-bottom:10px;">
+                    </div>
+                    <div id="anchor-lock-bar"
+                        style="display:none; justify-content:space-between; align-items:center; margin-bottom:8px; padding:6px 8px; background:rgba(255, 179, 0, 0.08); border:1px dashed var(--warning); border-radius:6px;">
+                        <span id="anchor-lock-msg"
+                            style="font-size:10px; font-weight:800; color:var(--warning); letter-spacing:0.4px;">🔒
+                            PRE-CONTRACT BASE RATES</span>
+                        <button type="button" id="anchor-lock-btn" onclick="toggleAnchorLock()"
+                            style="background:#222; color:var(--warning); border:1px solid var(--warning); border-radius:4px; padding:3px 8px; font-size:9px; font-weight:900; font-family:monospace; cursor:pointer; white-space:nowrap;">UNLOCK
+                            ANCHOR</button>
+                    </div>
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                         <div><span class="input-label">L5 Rate ($)</span><input type="number" id="rateL5"
                                 placeholder="38.37" oninput="this.setAttribute('data-base', this.value);"
                                 onchange="calc(); saveSettings();"></div>
@@ -3142,10 +3189,10 @@ border-top: 1px solid var(--vacation) !important;
                 </div>
                 <div
                     style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; border-top:1px solid #333; padding-top:10px; margin-top:10px;">
-                    <div><span class="input-label">FICA EE %</span><input type="number" id="ficaRate"
-                            placeholder="6.2" onchange="calc(); saveSettings();"></div>
-                    <div><span class="input-label">Medicare %</span><input type="number" id="medRate"
-                            placeholder="1.45" onchange="calc(); saveSettings();"></div>
+                    <div><span class="input-label">FICA EE %</span><input type="number" id="ficaRate" placeholder="6.2"
+                            onchange="calc(); saveSettings();"></div>
+                    <div><span class="input-label">Medicare %</span><input type="number" id="medRate" placeholder="1.45"
+                            onchange="calc(); saveSettings();"></div>
                 </div>
                 <input type="hidden" id="taxMode" value="smart">
             </div>
@@ -3416,13 +3463,12 @@ border-top: 1px solid var(--vacation) !important;
             <div
                 style="color:var(--accent); font-weight:900; font-size:11px; letter-spacing:1px; margin-bottom:10px; border-bottom:1px solid #333; padding-bottom:5px;">
                 SENIORITY & RATES</div>
-            <span class="input-label">Hire Date (Continuous Service)</span>
-            <div style="display:grid; grid-template-columns: 2fr 1fr; gap:5px; margin-bottom:10px;">
-                <input type="date" id="hire-date" style="margin:0;" onchange="saveSettings(); updateVacSummary();">
-                <input type="number" id="hire-year-manual" placeholder="Year" style="margin:0;"
-                    onchange="quickSetYear(this.value)">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                <span class="input-label" style="margin:0;">Hire Date (Continuous Service)</span>
+                <span id="vac-hire-date-static"
+                    style="font-family:monospace; font-weight:bold; color:#fff; font-size:13px;">--/--/--</span>
             </div>
-            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; width:100%; margin-bottom:5px;">
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; width:100%; margin-bottom:8px;">
                 <div><span class="input-label">Raw Prior Year W2</span><input type="number" id="rawW2"
                         placeholder="0.00" onchange="autoCalcW2();" enterkeyhint="next" style="margin-bottom:0;"></div>
                 <div><span class="input-label">w2 -(PS & Signing Bonus)</span><input type="number" id="prevW2"
@@ -3430,12 +3476,12 @@ border-top: 1px solid var(--vacation) !important;
                         style="margin-bottom:0;"></div>
             </div>
             <div style="display:flex; justify-content:space-between; align-items:center;">
+                <div id="vacRateDisplay"
+                    style="text-align:left; font-family:monospace; color:var(--warning); font-weight:bold; font-size:14px;">
+                    Vacation Rate: $0.00 / hr</div>
                 <input type="number" id="vacRateOverride" placeholder="Override $"
                     onchange="saveSettings(); calc(); updateVacationRateUI();"
-                    style="width:100px; margin:0; padding:6px; font-size:12px; border-color:var(--warning); background:rgba(255,235,59,0.05); color:var(--warning);">
-                <div id="vacRateDisplay" onclick="document.getElementById('vacRateOverride').focus()"
-                    style="text-align:right; font-family:monospace; color:var(--warning); font-weight:bold; font-size:14px; cursor:pointer;">
-                    Vacation Rate: $0.00 / hr</div>
+                    style="width:105px; margin:0; padding:6px; font-size:12px; border-color:var(--warning); background:rgba(255,235,59,0.05); color:var(--warning); text-align:right;">
             </div>
         </div>
         <div class="summary-box">
@@ -3575,9 +3621,27 @@ border-top: 1px solid var(--vacation) !important;
                                 style="width:105px; margin:0; padding:4px 6px; font-size:12px; font-family:monospace; font-weight:bold; color:var(--text); background:#000; border:1px solid #444; border-radius:4px; text-align:right;">
                         </div>
                     </div>
-                    <div class="eg-row"><span class="eg-label" style="color:var(--success);">ProfitSharing</span><span
+                    <div class="eg-row"><span class="eg-label" style="color:var(--success);">PS BONUS Q1</span><span
                             class="eg-units" style="color:#555;">--</span>
-                        <div class="eg-amt"><input type="number" id="base-earn-ProfitSharing" placeholder="0.00"
+                        <div class="eg-amt"><input type="number" id="base-earn-PS_BONUS_Q1" placeholder="0.00"
+                                style="width:105px; margin:0; padding:4px 6px; font-size:12px; font-family:monospace; font-weight:bold; color:var(--text); background:#000; border:1px solid #444; border-radius:4px; text-align:right;">
+                        </div>
+                    </div>
+                    <div class="eg-row"><span class="eg-label" style="color:var(--success);">PS BONUS Q2</span><span
+                            class="eg-units" style="color:#555;">--</span>
+                        <div class="eg-amt"><input type="number" id="base-earn-PS_BONUS_Q2" placeholder="0.00"
+                                style="width:105px; margin:0; padding:4px 6px; font-size:12px; font-family:monospace; font-weight:bold; color:var(--text); background:#000; border:1px solid #444; border-radius:4px; text-align:right;">
+                        </div>
+                    </div>
+                    <div class="eg-row"><span class="eg-label" style="color:var(--success);">PS BONUS Q3</span><span
+                            class="eg-units" style="color:#555;">--</span>
+                        <div class="eg-amt"><input type="number" id="base-earn-PS_BONUS_Q3" placeholder="0.00"
+                                style="width:105px; margin:0; padding:4px 6px; font-size:12px; font-family:monospace; font-weight:bold; color:var(--text); background:#000; border:1px solid #444; border-radius:4px; text-align:right;">
+                        </div>
+                    </div>
+                    <div class="eg-row"><span class="eg-label" style="color:var(--success);">PS BONUS Q4</span><span
+                            class="eg-units" style="color:#555;">--</span>
+                        <div class="eg-amt"><input type="number" id="base-earn-PS_BONUS_Q4" placeholder="0.00"
                                 style="width:105px; margin:0; padding:4px 6px; font-size:12px; font-family:monospace; font-weight:bold; color:var(--text); background:#000; border:1px solid #444; border-radius:4px; text-align:right;">
                         </div>
                     </div>
@@ -3851,8 +3915,9 @@ border-top: 1px solid var(--vacation) !important;
                         <button class="lc-nav-btn" onclick="lcNextMonth()">►</button>
                     </div>
                 </div>
-                <input type="text" id="lc-manual-input" placeholder="MM/DD/YYYY" oninput="handleManualDateEntry(this)"
-                    maxlength="10"
+                <input type="text" inputmode="numeric" enterkeyhint="done" id="lc-manual-input" placeholder="MM/DD/YY"
+                    oninput="handleManualDateEntry(this)"
+                    onkeydown="if(event.key==='Enter'){event.preventDefault(); handleLoanCalSubmit();}" maxlength="10"
                     style="width:100%; padding:8px; background:#000; color:var(--accent); border:1px solid var(--accent); border-radius:4px; text-align:center; font-family:monospace;">
             </div>
             <div id="lc-grid-container" class="loan-cal-grid"></div>
@@ -3918,17 +3983,169 @@ border-top: 1px solid var(--vacation) !important;
         };
 
         let currentPeriodId = null, ledgerData = {}, days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], auditData = {}, lastCalcBreakdown = {}, lastCalcHours = {}, lastUsedDeductions = {}, isHydrating = false;
+        let masterYtdSilos = {};
         let ytdBaseline = {};
 
-        function openYtdBaseline() {
-            let keys = ['gross', 'net', 'hrs', 'cnt', 'fed', 'state', 'city', 'fica', 'med', 'k', 'dues', 'duesHr', 'roth', 'life', 'charity', 'addOpt', 'l1', 'l2', 'garn'];
-            keys.forEach(k => { let el = document.getElementById('base-' + k); if (el) el.value = ytdBaseline[k] || ''; });
+        function computeVerifiedBaselineSubtractor(maxN) {
+            let sub = { gross: 0, net: 0, hrs: 0, cnt: 0, OTPrem: 0, earn: {}, earnHrs: {}, ded: {} };
+            let eKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "Incentive", "VacaBonus", "ProfitSharing", "MealTicket"];
+            eKeys.forEach(k => { sub.earn[k] = 0; sub.earnHrs[k] = 0; });
+            let dKeys = ['k', 'fed', 'state', 'city', 'fica', 'med', 'roth', 'dues', 'duesHr', 'life', 'addOpt', 'charity', 'l1', 'l2', 'garn'];
+            dKeys.forEach(k => { sub.ded[k] = 0; });
 
-            let eKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "Incentive", "VacaBonus", "ProfitSharing", "MealTicket", "OTPrem"];
-            eKeys.forEach(k => { let el = document.getElementById('base-earn-' + k); if (el) el.value = ytdBaseline['earn_' + k] || ''; });
+            if (!maxN || maxN <= 0) return sub;
+
+            let bidLvl = document.getElementById('biddedRate') ? document.getElementById('biddedRate').value : 5;
+            let schedLvl = document.getElementById('scheduledRate') ? document.getElementById('scheduledRate').value : 0;
+
+            for (let i = 1; i <= maxN; i++) {
+                let data = ledgerData[i];
+                if (!data) continue;
+                if (data.inputs && data.inputs['verified-toggle']) {
+                    sub.cnt++;
+                    sub.gross = r2(sub.gross + (data.gross || 0));
+                    sub.net = r2(sub.net + (data.net || 0));
+                    if (data.otPremium) sub.OTPrem = r2(sub.OTPrem + data.otPremium);
+                    if (data.breakdown) {
+                        eKeys.forEach(k => { sub.earn[k] = r2(sub.earn[k] + (data.breakdown[k] || 0)); });
+                    }
+                    if (data.breakdownHrs) {
+                        eKeys.forEach(k => {
+                            if (k !== 'Incentive') sub.earnHrs[k] = r2(sub.earnHrs[k] + (data.breakdownHrs[k] || 0));
+                        });
+                        ['Regular', 'Overtime', 'Sunday', 'CallOut', 'HolidayWk', 'Vacation', 'HolidayUH'].forEach(k => {
+                            sub.hrs = r2(sub.hrs + (data.breakdownHrs[k] || 0));
+                        });
+                    }
+                    if (data.deductions) {
+                        dKeys.forEach(k => { sub.ded[k] = r2(sub.ded[k] + (data.deductions[k] || 0)); });
+                    }
+                }
+                if (data.adjustments) {
+                    let pStart = periods[i - 1]?.startDateObj || new Date();
+                    data.adjustments.forEach(adj => {
+                        if (adj.verified && adj.express) {
+                            let hrs = parseFloat(adj.hrs) || 0;
+                            let rateLvl = adj.rate || "0";
+                            let incPct = parseFloat(adj.incPct) || 0;
+                            let isXtra = adj.xtra || false;
+                            let isPS = adj.isPS || false;
+                            let rateAmt = parseFloat(adj.rateAmt) || 0;
+                            let totalLineGross = 0;
+
+                            if (adj.flatGrossOverride !== undefined && !isPS) {
+                                totalLineGross = adj.flatGrossOverride;
+                                sub.earn.Regular = r2(sub.earn.Regular + totalLineGross);
+                            } else if (isPS) {
+                                totalLineGross = hrs * rateAmt;
+                                sub.earn.ProfitSharing = r2(sub.earn.ProfitSharing + totalLineGross);
+                            } else {
+                                let wSun = new Date(pStart); wSun.setDate(wSun.getDate() + (((adj.week || 1) - 1) * 7));
+                                let adjWorkRate = (schedLvl == 0) ? getRateForDate(bidLvl, wSun) : getRateForDate(schedLvl, wSun);
+                                let lineRate = (rateLvl && rateLvl !== "0") ? getRateForDate(rateLvl, wSun) : adjWorkRate;
+                                let baseLineGross = hrs * lineRate * (isXtra ? 1.5 : 1);
+                                let incDollars = baseLineGross * (incPct / 100);
+                                let diffDollars = hrs * 0.25;
+                                totalLineGross = baseLineGross + incDollars + diffDollars;
+                                if (isXtra) {
+                                    sub.earn.Overtime = r2(sub.earn.Overtime + baseLineGross);
+                                    sub.earnHrs.Overtime = r2(sub.earnHrs.Overtime + hrs);
+                                } else {
+                                    sub.earn.Regular = r2(sub.earn.Regular + baseLineGross);
+                                    sub.earnHrs.Regular = r2(sub.earnHrs.Regular + hrs);
+                                }
+                                sub.earn.Incentive = r2(sub.earn.Incentive + incDollars);
+                                sub.earn.ShiftDiff = r2(sub.earn.ShiftDiff + diffDollars);
+                                sub.earnHrs.ShiftDiff = r2(sub.earnHrs.ShiftDiff + hrs);
+                                sub.hrs = r2(sub.hrs + hrs);
+                            }
+                            sub.gross = r2(sub.gross + totalLineGross);
+                            let totalTaxes = (adj.tax401k || 0) + (adj.taxFed || 0) + (adj.taxState || 0) + (adj.taxCity || 0) + (adj.taxFica || 0) + (adj.taxMed || 0) + (adj.taxDues || 0);
+                            sub.net = r2(sub.net + (totalLineGross - (totalTaxes + (adj.taxDuesHrs || 0))));
+                            sub.ded.k = r2(sub.ded.k + (adj.tax401k || 0));
+                            sub.ded.fed = r2(sub.ded.fed + (adj.taxFed || 0));
+                            sub.ded.state = r2(sub.ded.state + (adj.taxState || 0));
+                            sub.ded.city = r2(sub.ded.city + (adj.taxCity || 0));
+                            sub.ded.fica = r2(sub.ded.fica + (adj.taxFica || 0));
+                            sub.ded.med = r2(sub.ded.med + (adj.taxMed || 0));
+                            sub.ded.dues = r2(sub.ded.dues + (adj.taxDues || 0));
+                            sub.ded.duesHr = r2(sub.ded.duesHr + (adj.taxDuesHrs || 0));
+                        }
+                    });
+                }
+            }
+            return sub;
+        }
+
+        function getSimulatedBaselineNetMap() {
+            let N = parseInt(ytdBaseline.cnt) || 0;
+            let map = {};
+            if (N <= 0) return map;
+
+            let unverifiedIds = [];
+            for (let i = 1; i <= N; i++) {
+                let d = ledgerData[i];
+                let isV = Boolean(d && d.inputs && d.inputs['verified-toggle']);
+                if (!isV) unverifiedIds.push(i);
+            }
+            if (unverifiedIds.length === 0) return map;
+
+            let sub = computeVerifiedBaselineSubtractor(N);
+            let remNet = r2((ytdBaseline.net || 0) - sub.net);
+            if (remNet < 0) remNet = 0;
+
+            let uCount = unverifiedIds.length;
+            let remCents = Math.round(remNet * 100);
+            let baseCents = Math.floor(remCents / uCount);
+            let leftoverCents = remCents - (baseCents * uCount);
+
+            unverifiedIds.forEach((chkId, idx) => {
+                let isLastUnverified = (idx === uCount - 1);
+                let cents = isLastUnverified ? (baseCents + leftoverCents) : baseCents;
+                map[chkId] = cents / 100;
+            });
+            return map;
+        }
+
+        function openYtdBaseline() {
+            let N = parseInt(ytdBaseline.cnt) || 0;
+            let sub = computeVerifiedBaselineSubtractor(N);
+            let hasSub = (N > 0 && sub.cnt > 0);
+
+            const fmtEditVal = (masterVal, subVal, isInt = false) => {
+                let m = parseFloat(masterVal) || 0;
+                if (!hasSub) return m ? m : '';
+                let rem = r2(m - (subVal || 0));
+                if (Math.abs(rem) < 0.005) rem = 0;
+                if (m === 0 && (subVal || 0) === 0) return '';
+                return isInt ? Math.max(0, Math.round(rem)) : Number(rem.toFixed(2));
+            };
+
+            let dMap = { fed: 'fed', state: 'state', city: 'city', fica: 'fica', med: 'med', k: 'k', dues: 'dues', duesHr: 'duesHr', roth: 'roth', life: 'life', charity: 'charity', addOpt: 'addOpt', l1: 'l1', l2: 'l2', garn: 'garn' };
+
+            let elGross = document.getElementById('base-gross'); if (elGross) elGross.value = fmtEditVal(ytdBaseline.gross, sub.gross);
+            let elNet = document.getElementById('base-net'); if (elNet) elNet.value = fmtEditVal(ytdBaseline.net, sub.net);
+            let elHrs = document.getElementById('base-hrs'); if (elHrs) elHrs.value = fmtEditVal(ytdBaseline.hrs, sub.hrs);
+            let elCnt = document.getElementById('base-cnt'); if (elCnt) elCnt.value = hasSub ? Math.max(0, N - sub.cnt) : (ytdBaseline.cnt || '');
+
+            Object.keys(dMap).forEach(k => {
+                let el = document.getElementById('base-' + k);
+                if (el) el.value = fmtEditVal(ytdBaseline[k], sub.ded[k]);
+            });
+
+            let eKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "Incentive", "VacaBonus", "ProfitSharing", "MealTicket"];
+            eKeys.forEach(k => {
+                let el = document.getElementById('base-earn-' + k);
+                if (el) el.value = fmtEditVal(ytdBaseline['earn_' + k], sub.earn[k]);
+            });
+            let elOTPrem = document.getElementById('base-earn-OTPrem');
+            if (elOTPrem) elOTPrem.value = fmtEditVal(ytdBaseline.earn_OTPrem, sub.OTPrem);
 
             let hKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "MealTicket"];
-            hKeys.forEach(k => { let el = document.getElementById('base-hrs-' + k); if (el) el.value = ytdBaseline['hrs_' + k] || ''; });
+            hKeys.forEach(k => {
+                let el = document.getElementById('base-hrs-' + k);
+                if (el) el.value = fmtEditVal(ytdBaseline['hrs_' + k], sub.earnHrs[k], k === 'MealTicket');
+            });
 
             let customList = document.getElementById('custom-ytd-earnings-list');
             if (customList) {
@@ -3938,6 +4155,8 @@ border-top: 1px solid var(--vacation) !important;
                 }
             }
 
+            document.getElementById('ytd-baseline-overlay').setAttribute('data-sub-active', hasSub ? 'true' : 'false');
+            document.getElementById('ytd-baseline-overlay').setAttribute('data-orig-n', String(N));
             document.getElementById('ytd-baseline-overlay').classList.add('show');
         }
 
@@ -3946,14 +4165,36 @@ border-top: 1px solid var(--vacation) !important;
         }
 
         function saveYtdBaseline() {
-            let keys = ['gross', 'net', 'hrs', 'cnt', 'fed', 'state', 'city', 'fica', 'med', 'k', 'dues', 'duesHr', 'roth', 'life', 'charity', 'addOpt', 'l1', 'l2', 'garn'];
-            keys.forEach(k => { let val = document.getElementById('base-' + k)?.value; ytdBaseline[k] = val ? parseFloat(val) : 0; });
+            let overlay = document.getElementById('ytd-baseline-overlay');
+            let subActive = overlay && overlay.getAttribute('data-sub-active') === 'true';
+            let origN = parseInt(overlay?.getAttribute('data-orig-n')) || 0;
+            let sub = subActive ? computeVerifiedBaselineSubtractor(origN) : null;
 
-            let eKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "Incentive", "VacaBonus", "ProfitSharing", "MealTicket", "OTPrem"];
-            eKeys.forEach(k => { let val = document.getElementById('base-earn-' + k)?.value; ytdBaseline['earn_' + k] = val ? parseFloat(val) : 0; });
+            let rawCntVal = document.getElementById('base-cnt')?.value;
+            let enteredCnt = rawCntVal ? parseInt(rawCntVal) : 0;
+            let newMasterCnt = (subActive && rawCntVal !== '') ? (enteredCnt + sub.cnt) : enteredCnt;
+
+            const mergeVal = (inputId, subVal) => {
+                let raw = document.getElementById(inputId)?.value;
+                let v = raw ? parseFloat(raw) : 0;
+                if (newMasterCnt === 0 && raw === '') return 0;
+                return subActive ? r2(v + (subVal || 0)) : v;
+            };
+
+            ytdBaseline.cnt = newMasterCnt;
+            ytdBaseline.gross = mergeVal('base-gross', sub?.gross);
+            ytdBaseline.net = mergeVal('base-net', sub?.net);
+            ytdBaseline.hrs = mergeVal('base-hrs', sub?.hrs);
+
+            let dKeys = ['fed', 'state', 'city', 'fica', 'med', 'k', 'dues', 'duesHr', 'roth', 'life', 'charity', 'addOpt', 'l1', 'l2', 'garn'];
+            dKeys.forEach(k => { ytdBaseline[k] = mergeVal('base-' + k, sub?.ded[k]); });
+
+            let eKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "Incentive", "VacaBonus", "ProfitSharing", "MealTicket"];
+            eKeys.forEach(k => { ytdBaseline['earn_' + k] = mergeVal('base-earn-' + k, sub?.earn[k]); });
+            ytdBaseline.earn_OTPrem = mergeVal('base-earn-OTPrem', sub?.OTPrem);
 
             let hKeys = ["Regular", "Overtime", "Sunday", "Vacation", "HolidayWk", "HolidayUH", "CallOut", "ShiftDiff", "MealTicket"];
-            hKeys.forEach(k => { let val = document.getElementById('base-hrs-' + k)?.value; ytdBaseline['hrs_' + k] = val ? parseFloat(val) : 0; });
+            hKeys.forEach(k => { ytdBaseline['hrs_' + k] = mergeVal('base-hrs-' + k, sub?.earnHrs[k]); });
 
             let customArr = [];
             document.querySelectorAll('.custom-ytd-row').forEach(row => {
@@ -3962,13 +4203,17 @@ border-top: 1px solid var(--vacation) !important;
                 if (n !== "" || a > 0) customArr.push({ name: n, amt: a });
             });
             ytdBaseline.customEarnings = customArr;
+            delete ytdBaseline.reconcileMode;
 
+            masterYtdSilos[currentYear] = ytdBaseline;
             saveSettings();
             renderYTD();
+            renderDashboard();
         }
         const catMap = { pretax: ['k'], taxes: ['fed', 'fica', 'med', 'state', 'city'], posttax: ['roth', 'dues', 'duesHr', 'life', 'addOpt', 'charity', 'l1', 'l2', 'garn'] };
         const deductionLabels = { k: "401k Contribution", fed: "Fed W/H", state: "Ohio W/H", city: "ClvlndCityW/H", fica: "FICA EE", med: "Fed MWT EE (medicare)", roth: "Roth / Post-Tax", dues: "USW Dues", duesHr: "USW Dues Hrs", life: "OPTL Life EE", addOpt: "Addl Optional", charity: "Charity", l1: "401K BU Loan 1", l2: "401K BU Loan 2", garn: "Garnishments" }, settingsMap = { state: 'stateTaxRate', city: 'cityTaxRate', fica: 'ficaRate', med: 'medRate', dues: 'duesRate', fed: 'fedTaxRate' };
-        const earningsOrder = ["MealTicket", "CallOut", "HolidayUH", "HolidayWk", "Overtime", "Sunday", "Vacation", "VacaBonus", "Regular", "ShiftDiff", "Incentive", "ProfitSharing"];
+        const earningsOrder = ["MealTicket", "CallOut", "HolidayUH", "HolidayWk", "Overtime", "Sunday", "Vacation", "VacaBonus", "Regular", "ShiftDiff", "Incentive", "PS_BONUS_Q1", "PS_BONUS_Q2", "PS_BONUS_Q3", "PS_BONUS_Q4"];
+        const earningsDisplayLabels = { PS_BONUS_Q1: "PS BONUS Q1", PS_BONUS_Q2: "PS BONUS Q2", PS_BONUS_Q3: "PS BONUS Q3", PS_BONUS_Q4: "PS BONUS Q4" };
 
         const baseRates = { 5: 38.37, 4: 36.12, 3: 34.32, 2: 31.21, 1: 28.51 };
 
@@ -3988,84 +4233,84 @@ border-top: 1px solid var(--vacation) !important;
         }
         let anchorUnlocked = false;
 
-function parseContractRowDate(dateStr) {
-if (!dateStr || !dateStr.includes('/')) return null;
-let p = dateStr.split('/');
-if (p.length !== 3) return null;
-let m = parseInt(p[0], 10);
-let d = parseInt(p[1], 10);
-let y = p[2].length === 4 ? parseInt(p[2], 10) : (2000 + parseInt(p[2], 10));
-if (isNaN(m) || isNaN(d) || isNaN(y)) return null;
-let dt = new Date(y, m - 1, d, 0, 0, 0, 0);
-return isNaN(dt.getTime()) ? null : dt;
-}
+        function parseContractRowDate(dateStr) {
+            if (!dateStr || !dateStr.includes('/')) return null;
+            let p = dateStr.split('/');
+            if (p.length !== 3) return null;
+            let m = parseInt(p[0], 10);
+            let d = parseInt(p[1], 10);
+            let y = p[2].length === 4 ? parseInt(p[2], 10) : (2000 + parseInt(p[2], 10));
+            if (isNaN(m) || isNaN(d) || isNaN(y)) return null;
+            let dt = new Date(y, m - 1, d, 0, 0, 0, 0);
+            return isNaN(dt.getTime()) ? null : dt;
+        }
 
-function getAnchorBaseRate(lvl) {
-let inp = document.getElementById('rateL' + lvl);
-return (inp && inp.value !== "") ? (parseFloat(inp.value) || baseRates[lvl]) : baseRates[lvl];
-}
+        function getAnchorBaseRate(lvl) {
+            let inp = document.getElementById('rateL' + lvl);
+            return (inp && inp.value !== "") ? (parseFloat(inp.value) || baseRates[lvl]) : baseRates[lvl];
+        }
 
-function toggleAnchorLock() {
-anchorUnlocked = !anchorUnlocked;
-syncAnchorLockUI();
-}
+        function toggleAnchorLock() {
+            anchorUnlocked = !anchorUnlocked;
+            syncAnchorLockUI();
+        }
 
-function syncAnchorLockUI() {
-const termEl = document.getElementById('contract-term');
-const term = termEl ? (parseInt(termEl.value) || 0) : 0;
-const bar = document.getElementById('anchor-lock-bar');
-const btn = document.getElementById('anchor-lock-btn');
-const msg = document.getElementById('anchor-lock-msg');
+        function syncAnchorLockUI() {
+            const termEl = document.getElementById('contract-term');
+            const term = termEl ? (parseInt(termEl.value) || 0) : 0;
+            const bar = document.getElementById('anchor-lock-bar');
+            const btn = document.getElementById('anchor-lock-btn');
+            const msg = document.getElementById('anchor-lock-msg');
 
-let hasActiveRows = false;
-for (let i = 1; i <= term; i++) {
-let v = parseFloat(document.getElementById(`r-val-${i}`)?.value) || 0;
-let dt = document.getElementById(`r-date-${i}`)?.value || "";
-if (v > 0 || dt !== "") { hasActiveRows = true; break; }
-}
+            let hasActiveRows = false;
+            for (let i = 1; i <= term; i++) {
+                let v = parseFloat(document.getElementById(`r-val-${i}`)?.value) || 0;
+                let dt = document.getElementById(`r-date-${i}`)?.value || "";
+                if (v > 0 || dt !== "") { hasActiveRows = true; break; }
+            }
 
-if (term === 0 || !hasActiveRows) {
-anchorUnlocked = false;
-if (bar) bar.style.display = 'none';
-for (let l = 1; l <= 5; l++) {
-let inp = document.getElementById('rateL' + l);
-if (inp) {
-inp.readOnly = false;
-inp.style.opacity = '1';
-inp.style.borderStyle = 'solid';
-}
-}
-return;
-}
+            if (term === 0 || !hasActiveRows) {
+                anchorUnlocked = false;
+                if (bar) bar.style.display = 'none';
+                for (let l = 1; l <= 5; l++) {
+                    let inp = document.getElementById('rateL' + l);
+                    if (inp) {
+                        inp.readOnly = false;
+                        inp.style.opacity = '1';
+                        inp.style.borderStyle = 'solid';
+                    }
+                }
+                return;
+            }
 
-if (bar) bar.style.display = 'flex';
-let locked = !anchorUnlocked;
-if (btn) {
-btn.innerText = locked ? 'UNLOCK ANCHOR' : 'LOCK ANCHOR';
-btn.style.color = locked ? 'var(--warning)' : 'var(--success)';
-btn.style.borderColor = locked ? 'var(--warning)' : 'var(--success)';
-}
-if (msg) {
-msg.innerText = locked ? '🔒 PRE-CONTRACT BASE ANCHOR' : '🔓 ANCHOR UNLOCKED (EDIT CAREFULLY)';
-msg.style.color = locked ? 'var(--warning)' : 'var(--success)';
-}
-for (let l = 1; l <= 5; l++) {
-let inp = document.getElementById('rateL' + l);
-if (inp) {
-inp.readOnly = locked;
-inp.style.opacity = locked ? '0.6' : '1';
-inp.style.borderStyle = locked ? 'dashed' : 'solid';
-}
-}
-}
+            if (bar) bar.style.display = 'flex';
+            let locked = !anchorUnlocked;
+            if (btn) {
+                btn.innerText = locked ? 'UNLOCK RATES' : 'LOCK RATES';
+                btn.style.color = locked ? 'var(--warning)' : 'var(--success)';
+                btn.style.borderColor = locked ? 'var(--warning)' : 'var(--success)';
+            }
+            if (msg) {
+                msg.innerText = locked ? '🔒 PRE-CONTRACT BASE RATES' : '🔓 RATES UNLOCKED (EDIT CAREFULLY)';
+                msg.style.color = locked ? 'var(--warning)' : 'var(--success)';
+            }
+            for (let l = 1; l <= 5; l++) {
+                let inp = document.getElementById('rateL' + l);
+                if (inp) {
+                    inp.readOnly = locked;
+                    inp.style.opacity = locked ? '0.6' : '1';
+                    inp.style.borderStyle = locked ? 'dashed' : 'solid';
+                }
+            }
+        }
 
-function generateContractRows() {
-const container = document.getElementById('raise-rows-container');
-if (!container) return;
-const term = parseInt(document.getElementById('contract-term')?.value) || 0;
-let html = "";
-for (let i = 1; i <= term; i++) {
-html += `
+        function generateContractRows() {
+            const container = document.getElementById('raise-rows-container');
+            if (!container) return;
+            const term = parseInt(document.getElementById('contract-term')?.value) || 0;
+            let html = "";
+            for (let i = 1; i <= term; i++) {
+                html += `
 <div class="contract-row" id="row-${i}" style="flex-direction: column; align-items: stretch; gap: 5px; padding: 8px 6px;">
 <div style="display:flex; flex-wrap: nowrap; justify-content: space-between; align-items: stretch; gap: 4px; width: 100%;">
 <select id="r-type-${i}" onchange="updateRowSymbol(${i}); saveSettings(); calc(); updateProjectedUI();" style="font-size:11px; padding:0 4px; margin:0; height:32px; background:#000; color:#fff; border:1px solid #444; border-radius:4px; flex: 1.2; min-width: 0; box-sizing:border-box;">
@@ -4081,47 +4326,46 @@ html += `
 </div>
 <div id="proj-row-${i}" style="font-size:10px; font-family:monospace; color:var(--dim); display:flex; justify-content:space-between; align-items:center; padding:0 2px;"></div>
 </div>`;
-}
-container.innerHTML = html;
-for (let i = 1; i <= term; i++) updateRowSymbol(i);
-updateProjectedUI();
-}
+            }
+            container.innerHTML = html;
+            for (let i = 1; i <= term; i++) updateRowSymbol(i);
+            updateProjectedUI();
+        }
 
-function updateProjectedUI() {
-const term = parseInt(document.getElementById('contract-term')?.value) || 0;
-let bidLvl = document.getElementById('biddedRate') ? document.getElementById('biddedRate').value : 5;
-let runningBid = getAnchorBaseRate(bidLvl);
-let yr1Bid = runningBid;
+        function updateProjectedUI() {
+            const term = parseInt(document.getElementById('contract-term')?.value) || 0;
+            let bidLvl = document.getElementById('biddedRate') ? document.getElementById('biddedRate').value : 5;
+            let runningBid = getAnchorBaseRate(bidLvl);
+            let yr1Bid = runningBid;
 
-for (let i = 1; i <= term; i++) {
-let elVal = document.getElementById(`r-val-${i}`);
-let val = elVal ? (parseFloat(elVal.value) || 0) : 0;
-let typeEl = document.getElementById(`r-type-${i}`);
-let type = typeEl ? typeEl.value : 'pct';
-let dStr = document.getElementById(`r-date-${i}`)?.value || '';
+            for (let i = 1; i <= term; i++) {
+                let elVal = document.getElementById(`r-val-${i}`);
+                let val = elVal ? (parseFloat(elVal.value) || 0) : 0;
+                let typeEl = document.getElementById(`r-type-${i}`);
+                let type = typeEl ? typeEl.value : 'pct';
+                let dStr = document.getElementById(`r-date-${i}`)?.value || '';
 
-if (type === 'pct') {
-runningBid += (runningBid * (val / 100));
-if (i === 1) yr1Bid += (yr1Bid * (val / 100));
-} else {
-runningBid += val;
-if (i === 1) yr1Bid += val;
-}
+                if (type === 'pct') {
+                    runningBid += (runningBid * (val / 100));
+                    if (i === 1) yr1Bid += (yr1Bid * (val / 100));
+                } else {
+                    runningBid += val;
+                    if (i === 1) yr1Bid += val;
+                }
 
-let rowSub = document.getElementById(`proj-row-${i}`);
-if (rowSub) {
-let effTag = dStr ? `Eff. ${dStr}` : 'Set Effective Date';
-rowSub.innerHTML = `<span style="color:#888;">↳ Yr ${i} (${effTag})</span><span style="color:var(--success); font-weight:bold;">L${bidLvl}: $${runningBid.toFixed(2)} <span style="color:var(--accent); font-weight:normal;">(${fR(runningBid)})</span></span>`;
-}
-}
+                let rowSub = document.getElementById(`proj-row-${i}`);
+                if (rowSub) {
+                    rowSub.innerHTML = `<span style="color:#888;">↳ Year ${i}</span><span style="color:var(--success); font-weight:bold;">L${bidLvl}: $${runningBid.toFixed(2)}</span>`;
+                }
+            }
 
-let ghostInput = document.getElementById('retro-new-rate');
-if (ghostInput && term > 0) {
-ghostInput.value = yr1Bid.toFixed(4);
-}
-if (typeof updateGhostRates === 'function') updateGhostRates();
-syncAnchorLockUI();
-}
+            let ghostInput = document.getElementById('retro-new-rate');
+            if (ghostInput && term > 0) {
+                ghostInput.value = yr1Bid.toFixed(4);
+            }
+            if (typeof updateGhostRates === 'function') updateGhostRates();
+            syncAnchorLockUI();
+        }
 
         function computeCalculatedTargetSunday() {
             let dateInput = document.getElementById('r-date-1');
@@ -4150,31 +4394,31 @@ syncAnchorLockUI();
             // EPOCH ENGINE: We no longer overwrite the base inputs here. 
             // The base inputs are safely preserved as the Ledger Anchor.
             anchorUnlocked = false;
-alert(`Success! Future Contract Boundary Locked.\nEffective Sunday: ${targetSunday.toLocaleDateString()}\n\nYour Pre-Contract Base Anchor is safely locked, and paychecks on or after each scheduled raise date will automatically step up.`);
-updateProjectedUI();
-calc();
-updateGhostRates();
-saveSettings();
-if (currentPeriodId) {
-loadPeriodData(currentPeriodId);
-}
-}
+            alert(`Success! Future Contract Boundary Locked.\nEffective Sunday: ${targetSunday.toLocaleDateString()}\n\nYour Pre-Contract Base Anchor is safely locked, and paychecks on or after each scheduled raise date will automatically step up.`);
+            updateProjectedUI();
+            calc();
+            updateGhostRates();
+            saveSettings();
+            if (currentPeriodId) {
+                loadPeriodData(currentPeriodId);
+            }
+        }
 
-function restoreBaseRates() {
-if (confirm("RESTORE BASE RATES?\n\nThis will restore the rate inputs to your hardcoded ground truths.")) {
-anchorUnlocked = false;
-document.getElementById('contract-term').value = "0";
-document.getElementById('raise-rows-container').innerHTML = "";
-for (let l = 1; l <= 5; l++) {
-document.getElementById('rateL' + l).value = baseRates[l].toFixed(2);
-document.getElementById('rateL' + l).setAttribute('data-base', baseRates[l].toFixed(2));
-}
-updateProjectedUI();
-updateGhostRates();
-saveSettings();
-calc();
-}
-}
+        function restoreBaseRates() {
+            if (confirm("RESTORE BASE RATES?\n\nThis will restore the rate inputs to your hardcoded ground truths.")) {
+                anchorUnlocked = false;
+                document.getElementById('contract-term').value = "0";
+                document.getElementById('raise-rows-container').innerHTML = "";
+                for (let l = 1; l <= 5; l++) {
+                    document.getElementById('rateL' + l).value = baseRates[l].toFixed(2);
+                    document.getElementById('rateL' + l).setAttribute('data-base', baseRates[l].toFixed(2));
+                }
+                updateProjectedUI();
+                updateGhostRates();
+                saveSettings();
+                calc();
+            }
+        }
 
         function recoverPlanner() {
             if (confirm("RESET PLANNER?\n\nThis will restore the planner inputs to your hardcoded ground truths.")) {
@@ -4183,9 +4427,9 @@ calc();
         }
 
         let currentYear = 2026;
-let masterVacationSilos = {}; // V3.9.0: Master object holding all years
-let masterPSInjectSilos = {}; // Year-isolated Profit Sharing AUTO toggles
-let vacationDates = []; // Active array for the currently selected year
+        let masterVacationSilos = {}; // V3.9.0: Master object holding all years
+        let masterPSInjectSilos = {}; // Year-isolated Profit Sharing AUTO toggles
+        let vacationDates = []; // Active array for the currently selected year
         let currentOpenMonth = null;
         let sundayTargetDate = null;
         let smTargetWeek = null;
@@ -4415,24 +4659,74 @@ let vacationDates = []; // Active array for the currently selected year
         }
 
         function switchYear(val) {
-saveSettings();
-currentYear = parseInt(val);
-vacationDates = masterVacationSilos[currentYear] || [];
-let psYearState = masterPSInjectSilos[currentYear] || {};
-for (let q = 1; q <= 4; q++) {
-let cb = document.getElementById('ps-inject-q' + q);
-if (cb) cb.checked = Boolean(psYearState[q]);
-if (typeof updatePSInjectUI === "function") updatePSInjectUI(q);
-}
-saveSettings();
-genPeriods();
-loadLedger();
-sweepProfitSharingHours();
-renderYTD();
-renderDashboard();
-updateGhostRates();
-}
-        function quickSetYear(val) { if (val.length === 4) { let y = parseInt(val); if (y > 1950 && y < 2030) { document.getElementById('hire-date').value = `${y}-01-01`; saveSettings(); } } }
+            saveSettings();
+            currentYear = parseInt(val);
+            vacationDates = masterVacationSilos[currentYear] || [];
+            ytdBaseline = masterYtdSilos[currentYear] || {};
+            let psYearState = masterPSInjectSilos[currentYear] || {};
+            for (let q = 1; q <= 4; q++) {
+                let cb = document.getElementById('ps-inject-q' + q);
+                if (cb) cb.checked = Boolean(psYearState[q]);
+                if (typeof updatePSInjectUI === "function") updatePSInjectUI(q);
+            }
+            saveSettings();
+            genPeriods();
+            loadLedger();
+            sweepProfitSharingHours();
+            renderYTD();
+            renderDashboard();
+            updateGhostRates();
+        }
+        function syncW2Field(srcId, dstId) {
+            let sEl = document.getElementById(srcId);
+            let dEl = document.getElementById(dstId);
+            if (sEl && dEl) dEl.value = sEl.value;
+        }
+
+        function formatHireDateInput(el) {
+            let raw = el.value.replace(/\D/g, '').slice(0, 6);
+            let out = raw;
+            if (raw.length > 2 && raw.length <= 4) out = raw.slice(0, 2) + '/' + raw.slice(2);
+            else if (raw.length > 4) out = raw.slice(0, 2) + '/' + raw.slice(2, 4) + '/' + raw.slice(4);
+            el.value = out;
+        }
+
+        function parseHireDateObj(val) {
+            if (!val) return null;
+            if (val.includes('/')) {
+                let p = val.split('/');
+                if (p.length !== 3) return null;
+                let m = parseInt(p[0], 10) - 1, d = parseInt(p[1], 10);
+                let yNum = parseInt(p[2], 10);
+                if (isNaN(m) || isNaN(d) || isNaN(yNum)) return null;
+                let yr = p[2].length === 4 ? yNum : (yNum >= 60 ? 1900 + yNum : 2000 + yNum);
+                return new Date(yr, m, d);
+            }
+            let parts = val.split('-');
+            if (parts.length === 3) return new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, parseInt(parts[2], 10));
+            return null;
+        }
+
+        let ovTimer = null;
+        function startOvHold(uid, field) {
+            endOvHold();
+            ovTimer = setTimeout(() => {
+                let spanEl = document.getElementById(field === 'gross' ? `exp-gross-${uid}` : `exp-net-${uid}`);
+                let inpEl = document.getElementById(field === 'gross' ? `ov-gross-in-${uid}` : `ov-net-in-${uid}`);
+                if (spanEl && inpEl) {
+                    if (!inpEl.value) {
+                        let curNum = parseFloat((spanEl.innerText || '0').replace(/[^0-9.-]+/g, ''));
+                        if (!isNaN(curNum) && curNum > 0) inpEl.value = curNum.toFixed(2);
+                    }
+                    spanEl.style.display = 'none';
+                    inpEl.style.display = 'inline-block';
+                    inpEl.focus();
+                }
+            }, 500);
+        }
+        function endOvHold() {
+            if (ovTimer) { clearTimeout(ovTimer); ovTimer = null; }
+        }
 
         function switchTab(t) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -4470,21 +4764,42 @@ updateGhostRates();
 
         function renderYTD() {
             try {
-                let yG = ytdBaseline.gross || 0, yN = ytdBaseline.net || 0, cnt = ytdBaseline.cnt || 0;
+                let baseN = parseInt(ytdBaseline.cnt) || 0;
+                let useVerifiedSumOnly = (baseN > 0 && ytdBaseline.reconcileMode === 'verified_sum');
+
+                let yG = useVerifiedSumOnly ? 0 : (ytdBaseline.gross || 0);
+                let yN = useVerifiedSumOnly ? 0 : (ytdBaseline.net || 0);
+                let cnt = useVerifiedSumOnly ? 0 : baseN;
                 let yEarn = {}, yHrs = {};
                 earningsOrder.forEach(k => {
-                    yEarn[k] = ytdBaseline['earn_' + k] || 0;
-                    yHrs[k] = ytdBaseline['hrs_' + k] || 0;
+                    yEarn[k] = useVerifiedSumOnly ? 0 : (ytdBaseline['earn_' + k] || 0);
+                    yHrs[k] = useVerifiedSumOnly ? 0 : (ytdBaseline['hrs_' + k] || 0);
                 });
                 let yDed = {
-                    k: ytdBaseline.k || 0, fed: ytdBaseline.fed || 0, state: ytdBaseline.state || 0, city: ytdBaseline.city || 0,
-                    fica: ytdBaseline.fica || 0, med: ytdBaseline.med || 0, roth: ytdBaseline.roth || 0, dues: ytdBaseline.dues || 0,
-                    duesHr: ytdBaseline.duesHr || 0, life: ytdBaseline.life || 0, addOpt: ytdBaseline.addOpt || 0, charity: ytdBaseline.charity || 0,
-                    l1: ytdBaseline.l1 || 0, l2: ytdBaseline.l2 || 0, garn: ytdBaseline.garn || 0
+                    k: useVerifiedSumOnly ? 0 : (ytdBaseline.k || 0),
+                    fed: useVerifiedSumOnly ? 0 : (ytdBaseline.fed || 0),
+                    state: useVerifiedSumOnly ? 0 : (ytdBaseline.state || 0),
+                    city: useVerifiedSumOnly ? 0 : (ytdBaseline.city || 0),
+                    fica: useVerifiedSumOnly ? 0 : (ytdBaseline.fica || 0),
+                    med: useVerifiedSumOnly ? 0 : (ytdBaseline.med || 0),
+                    roth: useVerifiedSumOnly ? 0 : (ytdBaseline.roth || 0),
+                    dues: useVerifiedSumOnly ? 0 : (ytdBaseline.dues || 0),
+                    duesHr: useVerifiedSumOnly ? 0 : (ytdBaseline.duesHr || 0),
+                    life: useVerifiedSumOnly ? 0 : (ytdBaseline.life || 0),
+                    addOpt: useVerifiedSumOnly ? 0 : (ytdBaseline.addOpt || 0),
+                    charity: useVerifiedSumOnly ? 0 : (ytdBaseline.charity || 0),
+                    l1: useVerifiedSumOnly ? 0 : (ytdBaseline.l1 || 0),
+                    l2: useVerifiedSumOnly ? 0 : (ytdBaseline.l2 || 0),
+                    garn: useVerifiedSumOnly ? 0 : (ytdBaseline.garn || 0)
                 };
-                let incentivePctSum = 0; let totalWorkedHours = ytdBaseline.hrs || 0; let yOTPrem = ytdBaseline.earn_OTPrem || 0;
+                let incentivePctSum = 0;
+                let totalWorkedHours = useVerifiedSumOnly ? 0 : (ytdBaseline.hrs || 0);
+                let baseOTPremVal = (ytdBaseline.earn_OTPrem && ytdBaseline.earn_OTPrem > 0) ? ytdBaseline.earn_OTPrem : r2((ytdBaseline.earn_Overtime || 0) / 3);
+                let yOTPrem = useVerifiedSumOnly ? 0 : baseOTPremVal;
 
                 for (const [id, data] of Object.entries(ledgerData)) {
+                    let chkNum = parseInt(id);
+                    if (!useVerifiedSumOnly && baseN > 0 && chkNum <= baseN) continue;
                     if (data.inputs && data.inputs['verified-toggle']) {
                         yG += (data.gross || 0); yN += (data.net || 0); cnt++;
                         if (data.breakdown) { for (let k in yEarn) yEarn[k] += (data.breakdown[k] || 0); }
@@ -4504,7 +4819,7 @@ updateGhostRates();
                     if (data.adjustments) {
                         let pStart = periods[parseInt(id) - 1]?.startDateObj || new Date();
                         data.adjustments.forEach(adj => {
-                            if (adj.verified) {
+                            if (adj.verified && adj.express) {
                                 let hrs = parseFloat(adj.hrs) || 0;
                                 let rateLvl = adj.rate || "0";
                                 let incPct = parseFloat(adj.incPct) || 0;
@@ -4516,11 +4831,13 @@ updateGhostRates();
                                 let baseLineGross = 0, incDollars = 0, diffDollars = 0;
 
                                 if (adj.flatGrossOverride !== undefined && !isPS) {
-                                    totalLineGross = adj.flatGrossOverride;
+                                    totalLineGross = (adj.grossOverride !== undefined && adj.grossOverride !== null && !isNaN(parseFloat(adj.grossOverride))) ? parseFloat(adj.grossOverride) : adj.flatGrossOverride;
                                     yEarn.Regular = (yEarn.Regular || 0) + totalLineGross;
                                 } else if (isPS) {
-                                    totalLineGross = hrs * rateAmt;
-                                    yEarn.ProfitSharing = (yEarn.ProfitSharing || 0) + totalLineGross;
+                                    totalLineGross = (adj.grossOverride !== undefined && adj.grossOverride !== null && !isNaN(parseFloat(adj.grossOverride))) ? parseFloat(adj.grossOverride) : (hrs * rateAmt);
+                                    let qMatch = String(adj.id || '').match(/q([1-4])$/i);
+                                    let qKey = qMatch ? `PS_BONUS_Q${qMatch[1]}` : `PS_BONUS_Q${Math.floor(pStart.getMonth() / 3) + 1}`;
+                                    yEarn[qKey] = (yEarn[qKey] || 0) + totalLineGross;
                                 } else {
                                     let wSun = new Date(pStart); wSun.setDate(wSun.getDate() + (((adj.week || 1) - 1) * 7));
                                     let bidLvl = document.getElementById('biddedRate').value;
@@ -4545,9 +4862,14 @@ updateGhostRates();
                                     totalWorkedHours += hrs;
                                 }
 
+                                if (!isPS && adj.flatGrossOverride === undefined && adj.grossOverride !== undefined && adj.grossOverride !== null && !isNaN(parseFloat(adj.grossOverride))) {
+                                    totalLineGross = parseFloat(adj.grossOverride);
+                                }
+                                if (!isPS && isXtra) yOTPrem += r2(baseLineGross / 3);
                                 yG += totalLineGross;
                                 let totalTaxes = (adj.tax401k || 0) + (adj.taxFed || 0) + (adj.taxState || 0) + (adj.taxCity || 0) + (adj.taxFica || 0) + (adj.taxMed || 0) + (adj.taxDues || 0);
-                                yN += (totalLineGross - (totalTaxes + (adj.taxDuesHrs || 0)));
+                                let lineNet = (adj.netOverride !== undefined && adj.netOverride !== null && !isNaN(parseFloat(adj.netOverride))) ? parseFloat(adj.netOverride) : (totalLineGross - (totalTaxes + (adj.taxDuesHrs || 0)));
+                                yN += lineNet;
 
                                 yDed.k += (adj.tax401k || 0);
                                 yDed.fed += (adj.taxFed || 0);
@@ -4576,8 +4898,11 @@ updateGhostRates();
                     else if (k === 'VacaBonus') { displayMid = yHrs[k].toFixed(0); }
                     else if (k === 'MealTicket') { displayMid = yHrs[k].toFixed(0); }
                     else { displayMid = yHrs[k].toFixed(2); }
-                    eHTML += `<div class="eg-row"><span class="eg-label">${k}</span><span class="eg-units">${displayMid}</span><span class="eg-amt">${f(yEarn[k])}</span>
-                        </div>`;
+                    if (Math.abs(yEarn[k] || 0) > 0.005) {
+                        let rowLbl = earningsDisplayLabels[k] || k;
+                        let rowMid = (k.startsWith('PS_BONUS_')) ? '--' : displayMid;
+                        eHTML += `<div class="eg-row"><span class="eg-label">${rowLbl}</span><span class="eg-units">${rowMid}</span><span class="eg-amt">${f(yEarn[k])}</span></div>`;
+                    }
                 });
 
                 // Inject custom earnings from the baseline
@@ -4593,14 +4918,20 @@ updateGhostRates();
 
                 catMap.taxes.forEach(k => {
                     ytdTaxTotal += (yDed[k] || 0);
-                    taxHTML += `<div class="dg-row"><span class="dg-label">${deductionLabels[k]}</span>\n<div class="dg-detail"></div><span class="dg-amt">${f(yDed[k])}</span>\n</div>`;
+                    if (Math.abs(yDed[k] || 0) > 0.005) {
+                        taxHTML += `<div class="dg-row"><span class="dg-label">${deductionLabels[k]}</span><div class="dg-detail"></div><span class="dg-amt">${f(yDed[k])}</span></div>`;
+                    }
                 });
                 catMap.pretax.forEach(k => {
-                    preHTML += `<div class="dg-row"><span class="dg-label">${deductionLabels[k]}</span>\n<div class="dg-detail"></div><span class="dg-amt">${f(yDed[k])}</span>\n</div>`;
+                    if (Math.abs(yDed[k] || 0) > 0.005) {
+                        preHTML += `<div class="dg-row"><span class="dg-label">${deductionLabels[k]}</span><div class="dg-detail"></div><span class="dg-amt">${f(yDed[k])}</span></div>`;
+                    }
                 });
                 catMap.posttax.forEach(k => {
                     ytdPostTotal += (yDed[k] || 0);
-                    postHTML += `<div class="dg-row"><span class="dg-label">${deductionLabels[k]}</span>\n<div class="dg-detail"></div><span class="dg-amt">${f(yDed[k])}</span>\n</div>`;
+                    if (Math.abs(yDed[k] || 0) > 0.005) {
+                        postHTML += `<div class="dg-row"><span class="dg-label">${deductionLabels[k]}</span><div class="dg-detail"></div><span class="dg-amt">${f(yDed[k])}</span></div>`;
+                    }
                 });
 
                 document.getElementById('ytd-posttax-rows').innerHTML = postHTML;
@@ -4615,19 +4946,35 @@ updateGhostRates();
         function renderDashboard() {
             const container = document.getElementById('check-list-container'); container.innerHTML = '';
             let today = new Date().toISOString().split('T')[0];
-            let totalEstGrossVal = 0;
+            let baseN = parseInt(ytdBaseline.cnt) || 0;
+            let useVerifiedSumOnly = (baseN > 0 && ytdBaseline.reconcileMode === 'verified_sum');
+            let totalEstGrossVal = useVerifiedSumOnly ? 0 : r2(ytdBaseline.gross || 0);
+            let simNetMap = getSimulatedBaselineNetMap();
 
             let dists = JSON.parse(localStorage.getItem('app_settings_v30'))?.distAccounts || [];
             let distTotal = dists.reduce((sum, d) => sum + d.amt, 0);
 
             periods.forEach(p => {
                 let data = ledgerData[p.id];
-                let isDone = (data && data.net > 0);
-                let isVerified = (data && data.inputs && data.inputs['verified-toggle']);
-                if (data && data.gross) { totalEstGrossVal = r2(totalEstGrossVal + data.gross); }
-                let val = isDone ? f(data.net) : "--";
+                let isVerified = Boolean(data && data.inputs && data.inputs['verified-toggle']);
+                let inBaselineRange = (!useVerifiedSumOnly && baseN > 0 && p.id <= baseN);
+                let isSimulated = (inBaselineRange && !isVerified);
+                let isDone = !isSimulated && Boolean(data && data.net > 0);
+
+                if (!inBaselineRange && data && data.gross) {
+                    totalEstGrossVal = r2(totalEstGrossVal + data.gross);
+                }
+
+                let val = "--";
+                if (isVerified && data) val = f(data.net);
+                else if (isSimulated) val = f(simNetMap[p.id] !== undefined ? simNetMap[p.id] : 0);
+                else if (isDone) val = f(data.net);
+
                 let statusClass = "";
-                if (isVerified) statusClass = "verified"; else if (isDone) statusClass = "estimated"; else if (today >= p.start && today <= p.end) statusClass = "current";
+                if (isVerified) statusClass = "verified";
+                else if (isSimulated) statusClass = "simulated";
+                else if (isDone) statusClass = "estimated";
+                else if (today >= p.start && today <= p.end) statusClass = "current";
 
                 // SCAN THE 14 DAYS FOR VACATIONS AND HOLIDAYS (SPLIT WEEK)
                 let isVac = false;
@@ -4695,13 +5042,18 @@ updateGhostRates();
                                 let diffDollars = (adj.hrs || 0) * 0.25;
                                 lineGross = baseLineGross + incDollars + diffDollars;
                             }
+                            if (adj.grossOverride !== undefined && adj.grossOverride !== null && !isNaN(parseFloat(adj.grossOverride))) {
+                                lineGross = parseFloat(adj.grossOverride);
+                            }
                             let totalTaxes = (adj.tax401k || 0) + (adj.taxFed || 0) + (adj.taxState || 0) + (adj.taxCity || 0) + (adj.taxFica || 0) + (adj.taxMed || 0) + (adj.taxDues || 0);
-                            let net = lineGross - (totalTaxes + (adj.taxDuesHrs || 0));
+                            let net = (adj.netOverride !== undefined && adj.netOverride !== null && !isNaN(parseFloat(adj.netOverride))) ? parseFloat(adj.netOverride) : (lineGross - (totalTaxes + (adj.taxDuesHrs || 0)));
                             expGross = r2(expGross + lineGross);
                             expNet = r2(expNet + net);
                         }
                     });
-                    totalEstGrossVal = r2(totalEstGrossVal + expGross);
+                    if (!inBaselineRange) {
+                        totalEstGrossVal = r2(totalEstGrossVal + expGross);
+                    }
                 }
 
                 let expressBadgeHTML = "";
@@ -4738,72 +5090,72 @@ ${expressBadgeHTML}
         }
 
         let returnToPS = null;
-let returnToRetro = null;
+        let returnToRetro = null;
 
-function scrollElementWithHeaderOffset(el) {
-if (!el) return;
-let headerOffset = 75;
-let rect = el.getBoundingClientRect();
-let offsetPos = rect.top + window.scrollY - headerOffset;
-window.scrollTo({ top: Math.max(0, offsetPos), behavior: 'smooth' });
-}
+        function scrollElementWithHeaderOffset(el) {
+            if (!el) return;
+            let headerOffset = 75;
+            let rect = el.getBoundingClientRect();
+            let offsetPos = rect.top + window.scrollY - headerOffset;
+            window.scrollTo({ top: Math.max(0, offsetPos), behavior: 'smooth' });
+        }
 
-function viewCheckFromPS(q, checkId, w) {
-returnToRetro = null;
-returnToPS = { q: q, checkId: checkId, week: w };
-week1Open = (w === 1);
-week2Open = (w === 2);
-document.getElementById('settings-view').style.display = 'none';
-openPeriod(checkId);
-setTimeout(() => {
-let sumEl = document.getElementById(`sum-${w}`);
-scrollElementWithHeaderOffset(sumEl);
-}, 60);
-}
+        function viewCheckFromPS(q, checkId, w) {
+            returnToRetro = null;
+            returnToPS = { q: q, checkId: checkId, week: w };
+            week1Open = (w === 1);
+            week2Open = (w === 2);
+            document.getElementById('settings-view').style.display = 'none';
+            openPeriod(checkId);
+            setTimeout(() => {
+                let sumEl = document.getElementById(`sum-${w}`);
+                scrollElementWithHeaderOffset(sumEl);
+            }, 60);
+        }
 
-function viewCheckFromRetro(checkId, focusWeek = 0) {
-returnToPS = null;
-returnToRetro = { checkId: checkId };
-week1Open = (focusWeek === 1);
-week2Open = (focusWeek === 2);
-document.getElementById('settings-view').style.display = 'none';
-openPeriod(checkId);
-setTimeout(() => {
-if (focusWeek === 1 || focusWeek === 2) {
-let sumEl = document.getElementById(`sum-${focusWeek}`);
-scrollElementWithHeaderOffset(sumEl);
-} else {
-let totEl = document.getElementById('total-ledger-content');
-scrollElementWithHeaderOffset(totEl);
-}
-}, 60);
-}
+        function viewCheckFromRetro(checkId, focusWeek = 0) {
+            returnToPS = null;
+            returnToRetro = { checkId: checkId };
+            week1Open = (focusWeek === 1);
+            week2Open = (focusWeek === 2);
+            document.getElementById('settings-view').style.display = 'none';
+            openPeriod(checkId);
+            setTimeout(() => {
+                if (focusWeek === 1 || focusWeek === 2) {
+                    let sumEl = document.getElementById(`sum-${focusWeek}`);
+                    scrollElementWithHeaderOffset(sumEl);
+                } else {
+                    let totEl = document.getElementById('total-ledger-content');
+                    scrollElementWithHeaderOffset(totEl);
+                }
+            }, 60);
+        }
 
-function openRoutedAdjustmentFromToast(targetYear, pid, uid) {
-returnToPS = null;
-returnToRetro = null;
-week1Open = false;
-week2Open = false;
-let sView = document.getElementById('settings-view');
-if (sView && sView.style.display === 'block') {
-saveSettings();
-document.querySelectorAll('#settings-view .collapsible-content').forEach(el => el.classList.remove('show'));
-document.querySelectorAll('#settings-view .collapsible-header .arrow').forEach(el => el.innerText = '▶');
-sView.style.display = 'none';
-}
-let bpModal = document.getElementById('backpay-modal');
-if (bpModal) bpModal.style.display = 'none';
-if (parseInt(targetYear) !== parseInt(currentYear)) {
-let ys = document.getElementById('year-selector');
-if (ys) ys.value = targetYear;
-switchYear(targetYear);
-}
-openPeriod(parseInt(pid));
-setTimeout(() => {
-let cardEl = document.querySelector(`.ps-card[data-uid="${uid}"]`);
-scrollElementWithHeaderOffset(cardEl);
-}, 80);
-}
+        function openRoutedAdjustmentFromToast(targetYear, pid, uid) {
+            returnToPS = null;
+            returnToRetro = null;
+            week1Open = false;
+            week2Open = false;
+            let sView = document.getElementById('settings-view');
+            if (sView && sView.style.display === 'block') {
+                saveSettings();
+                document.querySelectorAll('#settings-view .collapsible-content').forEach(el => el.classList.remove('show'));
+                document.querySelectorAll('#settings-view .collapsible-header .arrow').forEach(el => el.innerText = '▶');
+                sView.style.display = 'none';
+            }
+            let bpModal = document.getElementById('backpay-modal');
+            if (bpModal) bpModal.style.display = 'none';
+            if (parseInt(targetYear) !== parseInt(currentYear)) {
+                let ys = document.getElementById('year-selector');
+                if (ys) ys.value = targetYear;
+                switchYear(targetYear);
+            }
+            openPeriod(parseInt(pid));
+            setTimeout(() => {
+                let cardEl = document.querySelector(`.ps-card[data-uid="${uid}"]`);
+                scrollElementWithHeaderOffset(cardEl);
+            }, 80);
+        }
 
         function openPeriod(id) {
             isHydrating = true;
@@ -4816,6 +5168,20 @@ scrollElementWithHeaderOffset(cardEl);
             renderCalculator(p.startDateObj); renderDeductionRows();
 
             let isBrandNew = !ledgerData[id] || !ledgerData[id].inputs || Object.keys(ledgerData[id].inputs).length === 0;
+
+            // Reset audit mode before painting so prior check state never bleeds into another check
+            let initAuditEl = document.getElementById('audit-toggle');
+            let initDlEl = document.getElementById('summary-deductions');
+            let initDedBtn = document.getElementById('deductions-btn');
+            if (initAuditEl) initAuditEl.checked = false;
+            if (initDlEl) {
+                initDlEl.classList.remove('audit-mode');
+                initDlEl.style.display = 'none';
+            }
+            if (initDedBtn) {
+                initDedBtn.innerText = 'DEDUCTIONS ▼';
+                initDedBtn.style.background = 'transparent';
+            }
 
             // Paint shift attributes every time, but only wipe inputs if it's a brand new check
             applySchedule(p.startDateObj, isBrandNew);
@@ -4947,81 +5313,83 @@ scrollElementWithHeaderOffset(cardEl);
             document.getElementById('calculator-view').style.display = 'none';
 
             if (!forceDashboard && returnToPS) {
-let target = returnToPS;
-returnToPS = null;
-currentPeriodId = null;
-openSettings();
-let c10 = document.getElementById('card10');
-let a10 = document.getElementById('arrow-card10');
-if (c10 && !c10.classList.contains('show')) {
-c10.classList.add('show');
-if (a10) a10.innerText = '▼';
-}
-renderPSPreview(target.q);
-let drawer = document.getElementById(`ps-preview-q${target.q}`);
-if (drawer) drawer.style.display = 'flex';
-setTimeout(() => {
-let cardEl = document.getElementById(`ps-card-q${target.q}-c${target.checkId}-w${target.week}`);
-if (cardEl) {
-cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-}, 80);
-return;
-}
+                let target = returnToPS;
+                returnToPS = null;
+                currentPeriodId = null;
+                openSettings();
+                let c10 = document.getElementById('card10');
+                let a10 = document.getElementById('arrow-card10');
+                if (c10 && !c10.classList.contains('show')) {
+                    c10.classList.add('show');
+                    if (a10) a10.innerText = '▼';
+                }
+                renderPSPreview(target.q);
+                let drawer = document.getElementById(`ps-preview-q${target.q}`);
+                if (drawer) drawer.style.display = 'flex';
+                setTimeout(() => {
+                    let cardEl = document.getElementById(`ps-card-q${target.q}-c${target.checkId}-w${target.week}`);
+                    if (cardEl) {
+                        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 80);
+                return;
+            }
 
-if (!forceDashboard && returnToRetro) {
-let target = returnToRetro;
-returnToRetro = null;
-currentPeriodId = null;
-openSettings();
-let c2 = document.getElementById('card2');
-let a2 = document.getElementById('arrow-card2');
-if (c2 && !c2.classList.contains('show')) {
-c2.classList.add('show');
-if (a2) a2.innerText = '▼';
-}
-if (typeof switchContractTab === 'function') switchContractTab('contract');
-let retroBox = document.getElementById('retro-backpay-box');
-if (retroBox && !retroBox.classList.contains('show')) {
-retroBox.classList.add('show');
-let retroHdrArrow = retroBox.previousElementSibling ? retroBox.previousElementSibling.querySelector('.arrow') : null;
-if (retroHdrArrow) retroHdrArrow.innerText = '▼';
-}
-let rStr = document.getElementById('retro-start-date')?.value;
-let rRate = parseFloat(document.getElementById('retro-new-rate')?.value);
-if (rStr && !isNaN(rRate)) {
-sweepRetroBackpay();
-}
-let detailsList = document.getElementById('retro-details-list');
-if (detailsList && !detailsList.classList.contains('show')) {
-detailsList.classList.add('show');
-}
-setTimeout(() => {
-let cardEl = document.getElementById(`retro-card-c${target.checkId}`);
-if (cardEl) {
-cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-}, 80);
-return;
-}
+            if (!forceDashboard && returnToRetro) {
+                let target = returnToRetro;
+                returnToRetro = null;
+                currentPeriodId = null;
+                openSettings();
+                let c2 = document.getElementById('card2');
+                let a2 = document.getElementById('arrow-card2');
+                if (c2 && !c2.classList.contains('show')) {
+                    c2.classList.add('show');
+                    if (a2) a2.innerText = '▼';
+                }
+                if (typeof switchContractTab === 'function') switchContractTab('contract');
+                let retroBox = document.getElementById('retro-backpay-box');
+                if (retroBox && !retroBox.classList.contains('show')) {
+                    retroBox.classList.add('show');
+                    let retroHdrArrow = retroBox.previousElementSibling ? retroBox.previousElementSibling.querySelector('.arrow') : null;
+                    if (retroHdrArrow) retroHdrArrow.innerText = '▼';
+                }
+                let rStr = document.getElementById('retro-start-date')?.value;
+                let rRate = parseFloat(document.getElementById('retro-new-rate')?.value);
+                if (rStr && !isNaN(rRate)) {
+                    sweepRetroBackpay();
+                }
+                let detailsList = document.getElementById('retro-details-list');
+                if (detailsList && !detailsList.classList.contains('show')) {
+                    detailsList.classList.add('show');
+                }
+                setTimeout(() => {
+                    let cardEl = document.getElementById(`retro-card-c${target.checkId}`);
+                    if (cardEl) {
+                        cardEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }
+                }, 80);
+                return;
+            }
 
-returnToPS = null;
-returnToRetro = null;
-toggleMainHeader(true);
+            let closedId = currentPeriodId;
+            returnToPS = null;
+            returnToRetro = null;
+            toggleMainHeader(true);
             document.getElementById('dashboard-view').style.display = 'block';
             renderDashboard();
             currentPeriodId = null;
+            if (closedId) checkBaselineCompletionReconciliation(closedId);
         }
 
         function openSettings() {
-toggleMainHeader(false);
-document.getElementById('dashboard-view').style.display = 'none';
-document.getElementById('ytd-container').style.display = 'none';
-document.getElementById('settings-view').style.display = 'block';
-updateProjectedUI();
-updateGhostRates();
-window.scrollTo(0, 0);
-}
+            toggleMainHeader(false);
+            document.getElementById('dashboard-view').style.display = 'none';
+            document.getElementById('ytd-container').style.display = 'none';
+            document.getElementById('settings-view').style.display = 'block';
+            updateProjectedUI();
+            updateGhostRates();
+            window.scrollTo(0, 0);
+        }
 
         function closeSettings() {
             // Force an overarching save to finalize any on-the-fly typing that missed the trigger.
@@ -5074,15 +5442,15 @@ window.scrollTo(0, 0);
         }
 
         function handleLoanCalClear() {
-if (lcTargetInputId) {
-let target = document.getElementById(lcTargetInputId);
-if (target) target.value = '';
-saveSettings();
-if (lcTargetInputId.startsWith('r-date-')) updateProjectedUI();
-if (lcTargetInputId.includes('start') || lcTargetInputId.includes('date')) calc();
-}
-closeLoanCalendar();
-}
+            if (lcTargetInputId) {
+                let target = document.getElementById(lcTargetInputId);
+                if (target) target.value = '';
+                saveSettings();
+                if (lcTargetInputId.startsWith('r-date-')) updateProjectedUI();
+                if (lcTargetInputId.includes('start') || lcTargetInputId.includes('date')) calc();
+            }
+            closeLoanCalendar();
+        }
 
         function handleLoanCalCancel() {
             closeLoanCalendar();
@@ -5637,7 +6005,7 @@ closeLoanCalendar();
                 let vacOverrideEl = document.getElementById('vacRateOverride');
                 let override = vacOverrideEl ? parseFloat(vacOverrideEl.value) : 0;
                 let finalVac = (!isNaN(override) && override > 0) ? override : Math.max(bidRate, w2Rate);
-                let disp = document.getElementById('vacRateDisplay');
+                let disp = document.getElementById('vacRateDisplayMain') || document.getElementById('vacRateDisplay');
                 if (disp) disp.innerText = 'Vacation Rate: ' + fR(finalVac) + ' / hr';
             } catch (e) { console.log("Vacation UI Update skipped"); }
         }
@@ -5787,22 +6155,22 @@ closeLoanCalendar();
                         }
 
                         card.className = 'day-card';
-btn.classList.remove('btn-green', 'btn-purple');
-let sysHolName = isUnionHoliday(dateStr.split('T')[0]);
-let holVacBadge = document.getElementById(`hol-vac-badge-${w}-${d}`);
-if (holVacBadge) holVacBadge.style.display = 'none';
+                        btn.classList.remove('btn-green', 'btn-purple');
+                        let sysHolName = isUnionHoliday(dateStr.split('T')[0]);
+                        let holVacBadge = document.getElementById(`hol-vac-badge-${w}-${d}`);
+                        if (holVacBadge) holVacBadge.style.display = 'none';
 
-if (isVac) {
-if (isHol || sysHolName) {
-card.classList.add('status-hol', 'hol-vac-overlap');
-} else {
-card.classList.add('status-vac');
-}
-} else {
-if (isHol || sysHolName) { card.classList.add('status-hol'); }
-else if (xtra) { card.classList.add('status-xtra'); }
-else if (ro) { card.classList.add('ro-active'); }
-}
+                        if (isVac) {
+                            if (isHol || sysHolName) {
+                                card.classList.add('status-hol', 'hol-vac-overlap');
+                            } else {
+                                card.classList.add('status-vac');
+                            }
+                        } else {
+                            if (isHol || sysHolName) { card.classList.add('status-hol'); }
+                            else if (xtra) { card.classList.add('status-xtra'); }
+                            else if (ro) { card.classList.add('ro-active'); }
+                        }
 
                         let dShift = card.getAttribute('data-shift');
                         if (dShift === 'N') card.classList.add('night-shift');
@@ -6221,7 +6589,7 @@ ${isOpen ? '▲' : '▼'}
                         if (adj.week === 2) hasAdjW2 = true;
 
                         let totalLineGross = 0;
-                        let baseLineGross = 0, incDollars = 0, diffDollars = 0;
+                        let baseLineGross = 0, incDollars = 0, diffDollars = 0, lineRate = 0;
 
                         if (adj.flatGrossOverride !== undefined) {
                             totalLineGross = adj.flatGrossOverride;
@@ -6233,7 +6601,7 @@ ${isOpen ? '▲' : '▼'}
                             let adjSun = new Date(pStart); adjSun.setDate(adjSun.getDate() + (((adj.week || 1) - 1) * 7));
                             let adjWorkRate = (schedLvl == 0) ? getRateForDate(bidLvl, adjSun) : getRateForDate(schedLvl, adjSun);
                             let rLvl = adj.rate || "0";
-                            let lineRate = (rLvl && rLvl !== "0") ? getRateForDate(rLvl, adjSun) : adjWorkRate;
+                            lineRate = (rLvl && rLvl !== "0") ? getRateForDate(rLvl, adjSun) : adjWorkRate;
 
                             baseLineGross = (adj.hrs || 0) * lineRate * (isXtra ? 1.5 : 1);
                             incDollars = baseLineGross * ((adj.incPct || 0) / 100);
@@ -6247,6 +6615,8 @@ ${isOpen ? '▲' : '▼'}
 
                             if (adj.isPS) {
                                 adjBreakdown.psC += totalLineGross;
+                            } else if (adj.flatGrossOverride !== undefined) {
+                                adjBreakdown.rC += adj.flatGrossOverride;
                             } else {
                                 if (adj.xtra) {
                                     adjBreakdown.oC += baseLineGross;
@@ -6260,18 +6630,21 @@ ${isOpen ? '▲' : '▼'}
                                 adjBreakdown.diffH += (adj.hrs || 0);
                                 adjBreakdown.incC += incDollars;
                             }
-                            if (adj.flatGrossOverride !== undefined && !adj.isPS) {
-                                adjBreakdown.rC += adj.flatGrossOverride;
-                            }
                         } else {
                             if (!adj.isPS && adj.xtra) {
                                 let rLvl = adj.rate || "0";
                                 let lineRate = (rLvl && rLvl !== "0") ? getRateForDate(rLvl, targetCheckDate) : workRate;
                                 otPremCalc += ((adj.hrs || 0) * lineRate * 0.5);
                             }
+                            if (adj.grossOverride !== undefined && adj.grossOverride !== null && !isNaN(parseFloat(adj.grossOverride))) {
+                                totalLineGross = parseFloat(adj.grossOverride);
+                            }
                             let totalTaxes = (adj.tax401k || 0) + (adj.taxFed || 0) + (adj.taxState || 0) + (adj.taxCity || 0) + (adj.taxFica || 0) + (adj.taxMed || 0) + (adj.taxDues || 0);
                             let expressDuesHrsVal = (adj.taxDuesHrs || 0);
                             let expressNet = totalLineGross - (totalTaxes + expressDuesHrsVal);
+                            if (adj.netOverride !== undefined && adj.netOverride !== null && !isNaN(parseFloat(adj.netOverride))) {
+                                expressNet = parseFloat(adj.netOverride);
+                            }
                             let gDisp = document.getElementById(`exp-gross-${adj.id}`);
                             let nDisp = document.getElementById(`exp-net-${adj.id}`);
                             if (gDisp) gDisp.innerText = f(totalLineGross);
@@ -6350,10 +6723,10 @@ ${isOpen ? '▲' : '▼'}
                     <div class="grid-hours">${t_shiftH.toFixed(2)}h</div>
                     <div class="grid-rate">${totalDiffRateDisplay}</div>
                     <div class="grid-amt">${f(t_shiftC)}</div>` : ''}
-                    ${showTotRow(adjHrs, adjGross) ? `<div class="grid-label" style="color:#ff5252">Adjustment</div>
-                    <div class="grid-hours">${adjHrs.toFixed(2)}h</div>
-                    <div class="grid-rate">${fR(adjHrs > 0 ? adjGross / adjHrs : 0)}</div>
-                    <div class="grid-amt">${f(adjGross)}</div>` : ''}
+                    ${showTotRow(adjHrs, adjGross) ? `<div class="grid-label" style="color:#ff5252">Adjustment (Incl.)</div>
+<div class="grid-hours">${adjHrs.toFixed(2)}h</div>
+<div class="grid-rate">${fR(adjHrs > 0 ? adjGross / adjHrs : 0)}</div>
+<div class="grid-amt">${f(adjGross)}</div>` : ''}
                     ${showTotRow(0, t_incC) ? `<div class="grid-label" style="color:#b2dfdb">Incentive</div>
                     <div class="grid-hours"></div>
                     <div class="grid-rate"></div>
@@ -6368,10 +6741,9 @@ ${isOpen ? '▲' : '▼'}
 
                 let dR = parseFloat(document.getElementById('duesRate').value) || 1.45; let dCF = parseFloat(document.getElementById('duesCapFactor').value) || 1.2923; let dHrR = parseFloat(document.getElementById('duesHrRate').value) || 0.02;
 
-                // PROTOCOL 4: NEW SMART DUAL-BUCKET UNION DUES ENGINE
-                let totalDuesHours = totalWorkHrs + GT.cH; // Ensure Call-Out is included in divisor
-                let duesEligibleGross = totalGross - GT.mtC; // Strip untaxed meal tickets
-                let incentivePay = GT.incC; // FIX: GT.incC already contains the final calculated dollars
+                let totalDuesHours = totalWorkHrs + GT.cH + adjHrs;
+                let duesEligibleGross = totalGross - GT.mtC;
+                let incentivePay = GT.incC + adjBreakdown.incC;
                 let incentiveDues = incentivePay * (dR / 100);
                 let baseGross = duesEligibleGross - incentivePay;
                 let avgHrRate = (totalDuesHours > 0) ? (baseGross / totalDuesHours) : 0;
@@ -6384,9 +6756,10 @@ ${isOpen ? '▲' : '▼'}
                 let ficaPct = document.getElementById('ficaRate').value !== "" ? parseFloat(document.getElementById('ficaRate').value) : 6.2;
                 let medPct = document.getElementById('medRate').value !== "" ? parseFloat(document.getElementById('medRate').value) : 1.45;
 
-                let taxableGross = totalGross - GT.mtC - r2((totalGross - GT.mtC) * kR);
+                let taxableGross = totalGross - r2((totalGross - GT.mtC) * kR);
                 let fedTaxAmt = 0; let stateTaxAmt = 0;
-                let taxMode = document.getElementById('taxMode').value;
+                let taxModeEl = document.getElementById('taxMode');
+                let taxMode = (taxModeEl && taxModeEl.value) ? taxModeEl.value : 'smart';
 
                 if (taxMode === 'manual') {
                     let fedPct = parseFloat(document.getElementById('fedTaxRate').value) || 0;
@@ -6394,9 +6767,11 @@ ${isOpen ? '▲' : '▼'}
                     fedTaxAmt = r2(taxableGross * (fedPct / 100));
                     stateTaxAmt = r2(taxableGross * (statePct / 100));
                 } else {
-                    let fs = document.getElementById('filingStatus').value || 'S';
+                    let fsEl = document.getElementById('filingStatus');
+                    let fs = (fsEl && fsEl.value) ? fsEl.value : 'MFJ';
                     let dict = taxDict[currentYear] || taxDict[2026];
-                    let fedData = dict.fed[fs]; let ohioData = dict.ohio;
+                    let fedData = (dict && dict.fed && dict.fed[fs]) ? dict.fed[fs] : taxDict[2026].fed.MFJ;
+                    let ohioData = (dict && dict.ohio) ? dict.ohio : taxDict[2026].ohio;
 
                     let step3 = parseFloat(document.getElementById('w4-step3').value) || 0;
                     let step4a = parseFloat(document.getElementById('w4-step4a').value) || 0;
@@ -6472,7 +6847,7 @@ ${isOpen ? '▲' : '▼'}
                         document.getElementById('delta-' + key).innerText = (!isVerified && aV !== undefined && Math.abs(dlt) > 0.005) ? (dlt > 0 ? "+" : "" + dlt.toFixed(2)) : "";
                         document.getElementById('delta-' + key).style.color = dlt > 0 ? '#ff5252' : '#00c853';
                         let btn = document.getElementById('action-' + key); if (btn) {
-let base = (key == 'city' || key == 'fica' || key == 'med' || key == 'dues') ? totalGross : (totalGross - est.k);
+                            let base = (key == 'city' || key == 'fica' || key == 'med' || key == 'dues') ? totalGross : (totalGross - est.k);
                             if (!isVerified && (settingsMap[key] || key === 'fed') && key !== 'dues' && aV !== undefined && Math.abs(dlt) > 0.005 && base > 0) {
                                 btn.classList.add('show');
                                 btn.onclick = function () {
@@ -6517,7 +6892,7 @@ let base = (key == 'city' || key == 'fica' || key == 'med' || key == 'dues') ? t
                     lastCalcBreakdown = { Regular: GT.rC + adjBreakdown.rC, Vacation: GT.vC, Overtime: GT.oC + adjBreakdown.oC, Sunday: GT.sC, CallOut: GT.cC, HolidayWk: GT.hC, HolidayUH: GT.uhC, ShiftDiff: shiftGross + adjBreakdown.diffC, Incentive: GT.incC + adjBreakdown.incC, VacaBonus: GT.vbC, MealTicket: GT.mtC, ProfitSharing: adjBreakdown.psC, PayrollAdjustment: adjGross, OTPrem: r2(otPremCalc) };
                     lastCalcHours = { Regular: GT.rH + adjBreakdown.rH, Vacation: GT.vH, Overtime: GT.oH + adjBreakdown.oH, Sunday: GT.sH, CallOut: GT.cH, HolidayWk: GT.hH, HolidayUH: GT.uhH, ShiftDiff: shiftHours + adjBreakdown.diffH, Incentive: (parseFloat(document.getElementById('bonus-1').value) || 0) + (parseFloat(document.getElementById('bonus-2').value) || 0), VacaBonus: (GT.vbC > 0 ? 1 : 0), MealTicket: GT.mtH, PayrollAdjustment: adjHrs };
 
-                    pData.gross = r2((lastCalcBreakdown.Regular || 0) + (lastCalcBreakdown.Vacation || 0) + (lastCalcBreakdown.Overtime || 0) + (lastCalcBreakdown.Sunday || 0) + (lastCalcBreakdown.CallOut || 0) + (lastCalcBreakdown.HolidayWk || 0) + (lastCalcBreakdown.HolidayUH || 0) + (lastCalcBreakdown.ShiftDiff || 0) + (lastCalcBreakdown.Incentive || 0) + (lastCalcBreakdown.VacaBonus || 0) + (lastCalcBreakdown.MealTicket || 0) + (lastCalcBreakdown.ProfitSharing || 0) + (lastCalcBreakdown.PayrollAdjustment || 0));
+                    pData.gross = r2((lastCalcBreakdown.Regular || 0) + (lastCalcBreakdown.Vacation || 0) + (lastCalcBreakdown.Overtime || 0) + (lastCalcBreakdown.Sunday || 0) + (lastCalcBreakdown.CallOut || 0) + (lastCalcBreakdown.HolidayWk || 0) + (lastCalcBreakdown.HolidayUH || 0) + (lastCalcBreakdown.ShiftDiff || 0) + (lastCalcBreakdown.Incentive || 0) + (lastCalcBreakdown.VacaBonus || 0) + (lastCalcBreakdown.MealTicket || 0) + (lastCalcBreakdown.ProfitSharing || 0));
                     pData.net = parseFloat(document.getElementById('netDisplay').innerText.replace(/[^0-9.-]+/g, "")) || 0;
 
                     let dists = JSON.parse(localStorage.getItem('app_settings_v30'))?.distAccounts || [];
@@ -6558,12 +6933,12 @@ let base = (key == 'city' || key == 'fica' || key == 'med' || key == 'dues') ? t
                         raises: []
                     };
                     for (let i = 1; i <= contractSnapshot.term; i++) {
-contractSnapshot.raises.push({
-val: parseFloat(document.getElementById(`r-val-${i}`)?.value) || 0,
-type: document.getElementById(`r-type-${i}`)?.value || 'pct',
-date: document.getElementById(`r-date-${i}`)?.value || ''
-});
-}
+                        contractSnapshot.raises.push({
+                            val: parseFloat(document.getElementById(`r-val-${i}`)?.value) || 0,
+                            type: document.getElementById(`r-type-${i}`)?.value || 'pct',
+                            date: document.getElementById(`r-date-${i}`)?.value || ''
+                        });
+                    }
                     pData.contractSnapshot = contractSnapshot;
 
                     pData.actuals = auditData[currentPeriodId] || {};
@@ -6625,37 +7000,46 @@ date: document.getElementById(`r-date-${i}`)?.value || ''
             let runningRate = base;
 
             let datedSteps = [];
-for (let i = 0; i < raises.length; i++) {
-let rObj = raises[i];
-if (!rObj || !rObj.date) continue;
-let rDate = parseContractRowDate(rObj.date);
-if (!rDate) continue;
-datedSteps.push({ val: parseFloat(rObj.val) || 0, type: rObj.type || 'pct', rDate: rDate, idx: i });
-}
-datedSteps.sort((a, b) => (a.rDate.getTime() - b.rDate.getTime()) || (a.idx - b.idx));
+            for (let i = 0; i < raises.length; i++) {
+                let rObj = raises[i];
+                if (!rObj || !rObj.date) continue;
+                let rDate = parseContractRowDate(rObj.date);
+                if (!rDate) continue;
+                datedSteps.push({ val: parseFloat(rObj.val) || 0, type: rObj.type || 'pct', rDate: rDate, idx: i });
+            }
+            datedSteps.sort((a, b) => (a.rDate.getTime() - b.rDate.getTime()) || (a.idx - b.idx));
 
-for (let i = 0; i < datedSteps.length; i++) {
-let step = datedSteps[i];
-if (check.getTime() >= step.rDate.getTime()) {
-if (step.type === 'pct') runningRate += (runningRate * (step.val / 100));
-else runningRate += step.val;
-}
-}
+            for (let i = 0; i < datedSteps.length; i++) {
+                let step = datedSteps[i];
+                if (check.getTime() >= step.rDate.getTime()) {
+                    if (step.type === 'pct') runningRate += (runningRate * (step.val / 100));
+                    else runningRate += step.val;
+                }
+            }
 
-return runningRate;
-}
+            return runningRate;
+        }
 
         function toggleAuditMode() {
-            let on = document.getElementById('audit-toggle').checked;
+            let auditChk = document.getElementById('audit-toggle');
+            let on = auditChk ? auditChk.checked : false;
             let dl = document.getElementById('summary-deductions');
             let btn = document.getElementById('deductions-btn');
+            let hdr = document.querySelector('#calculator-view .audit-header');
 
             if (on) {
-                dl.classList.add('audit-mode');
-                dl.style.display = 'flex';
+                if (dl) {
+                    dl.classList.add('audit-mode');
+                    dl.style.display = 'flex';
+                }
                 if (btn) { btn.innerText = 'DEDUCTIONS ▲'; btn.style.background = 'rgba(255, 82, 82, 0.15)'; }
+                if (hdr && typeof scrollElementWithHeaderOffset === 'function') scrollElementWithHeaderOffset(hdr);
             } else {
-                dl.classList.remove('audit-mode');
+                if (dl) {
+                    dl.classList.remove('audit-mode');
+                    dl.style.display = 'none';
+                }
+                if (btn) { btn.innerText = 'DEDUCTIONS ▼'; btn.style.background = 'transparent'; }
             }
             calc();
         }
@@ -6663,14 +7047,28 @@ return runningRate;
         function toggleDeductionsDrawer() {
             let el = document.getElementById('summary-deductions');
             let btn = document.getElementById('deductions-btn');
+            let auditChk = document.getElementById('audit-toggle');
+            let hdr = document.querySelector('#calculator-view .audit-header');
+            if (!el) return;
+
             if (el.style.display === 'none' || el.style.display === '') {
                 el.style.display = 'flex';
-                btn.innerText = 'DEDUCTIONS ▲';
-                btn.style.background = 'rgba(255, 82, 82, 0.15)';
+                if (btn) {
+                    btn.innerText = 'DEDUCTIONS ▲';
+                    btn.style.background = 'rgba(255, 82, 82, 0.15)';
+                }
+                if (hdr && typeof scrollElementWithHeaderOffset === 'function') scrollElementWithHeaderOffset(hdr);
             } else {
                 el.style.display = 'none';
-                btn.innerText = 'DEDUCTIONS ▼';
-                btn.style.background = 'transparent';
+                if (btn) {
+                    btn.innerText = 'DEDUCTIONS ▼';
+                    btn.style.background = 'transparent';
+                }
+                if (auditChk && auditChk.checked) {
+                    auditChk.checked = false;
+                    el.classList.remove('audit-mode');
+                    calc();
+                }
             }
         }
         function updateAudit(k, v) { if (!auditData[currentPeriodId]) auditData[currentPeriodId] = {}; if (v === "") delete auditData[currentPeriodId][k]; else auditData[currentPeriodId][k] = parseFloat(v); calc(); }
@@ -6696,13 +7094,13 @@ return runningRate;
         }
 
         function requestRateUpdate(l, a, t, i, sl) {
-let el = document.getElementById(i);
-let rawCur = (el && el.value !== "") ? el.value : (el ? el.placeholder : "0");
-let r = (a / t) * 100, c = parseFloat(rawCur) || 0;
-if (confirm(`Update ${sl} Rate?\n\nBased on Taxable Income: $${t.toFixed(2)}\nActual Tax: $${a.toFixed(2)}\n\nNew Rate: ${r.toFixed(4)}%\nCurrent: ${c}%`)) {
-if (el) el.value = r.toFixed(4); saveSettings(); calc();
-}
-}
+            let el = document.getElementById(i);
+            let rawCur = (el && el.value !== "") ? el.value : (el ? el.placeholder : "0");
+            let r = (a / t) * 100, c = parseFloat(rawCur) || 0;
+            if (confirm(`Update ${sl} Rate?\n\nBased on Taxable Income: $${t.toFixed(2)}\nActual Tax: $${a.toFixed(2)}\n\nNew Rate: ${r.toFixed(4)}%\nCurrent: ${c}%`)) {
+                if (el) el.value = r.toFixed(4); saveSettings(); calc();
+            }
+        }
 
         // requestCapFactorUpdate removed via Protocol 4 (Surgical Strike)
 
@@ -6781,11 +7179,36 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
             m.style.display = 'flex';
         }
 
+        function getDstAdj(dateStr, shiftChar, baseHrsNum, isCustom) {
+            if (!dateStr || shiftChar !== 'N') return 0;
+            if (isCustom) {
+                let dstEn = document.getElementById('custom-dst-check')?.checked;
+                if (!dstEn) return 0;
+            }
+            let parts = dateStr.split('-');
+            if (parts.length !== 3) return 0;
+            let y = parseInt(parts[0], 10), m = parseInt(parts[1], 10) - 1, d = parseInt(parts[2], 10);
+            let dt = new Date(y, m, d);
+            if (dt.getDay() !== 0) return 0;
+            if (m === 2) {
+                let firstSun = new Date(y, 2, 1).getDay();
+                let secondSun = 1 + ((7 - firstSun) % 7) + 7;
+                if (d === secondSun) return (baseHrsNum === 8) ? -1 : -1;
+            }
+            if (m === 10) {
+                let firstSun = new Date(y, 10, 1).getDay();
+                let firstSunDate = 1 + ((7 - firstSun) % 7);
+                if (d === firstSunDate) return 1;
+            }
+            return 0;
+        }
+
         function toggle12(w, d) {
             let b = document.getElementById('btn-' + w + '-' + d);
             let t = document.getElementById('time-' + w + '-' + d);
-            if (b.classList.contains('active')) { b.classList.remove('active'); b.innerText = "12 HR"; t.value = ""; }
-            else { b.classList.add('active'); b.innerText = "12 HR"; t.value = ""; }
+            let baseText = b.getAttribute('data-base-hr') || "12 HR";
+            if (b.classList.contains('active')) { b.classList.remove('active'); b.innerText = baseText; t.value = ""; }
+            else { b.classList.add('active'); b.innerText = baseText; t.value = ""; }
             calc();
         }
 
@@ -7008,9 +7431,8 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
 
             let extraBtn = document.getElementById(`btn-extra-${w}`);
             if (extraBtn) {
-                let isXtraVis = document.getElementById(`xtra-lbl-${w}-0`)?.style.display === 'flex';
-                extraBtn.innerText = isXtraVis ? `- REMOVE EXTRA` : `+ ADD EXTRA`;
-                extraBtn.setAttribute('data-active', isXtraVis);
+                extraBtn.innerText = `+ ADD EXTRA`;
+                extraBtn.setAttribute('data-active', 'false');
             }
 
             let muBtn = document.getElementById(`btn-mu-${w}`);
@@ -7038,15 +7460,19 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
             let tray = document.getElementById(`events-tray-${w}`);
             if (tray) tray.style.display = 'none';
 
-            if (chk) {
+            if (type === 'extra') {
+                isActive = true;
+                btn.setAttribute('data-active', 'false');
+                btn.innerText = `+ ADD ${label}`;
+            } else if (chk) {
                 chk.checked = !chk.checked;
                 isActive = chk.checked;
+                btn.innerText = isActive ? `- REMOVE ${label}` : `+ ADD ${label}`;
             } else {
                 isActive = !(btn.getAttribute('data-active') === 'true');
                 btn.setAttribute('data-active', isActive);
+                btn.innerText = isActive ? `- REMOVE ${label}` : `+ ADD ${label}`;
             }
-
-            btn.innerText = isActive ? `- REMOVE ${label}` : `+ ADD ${label}`;
 
             if (type !== 'ev-occ') {
                 let occChk = document.getElementById(`ev-occ-${w}`);
@@ -7059,17 +7485,9 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
             }
 
             if (type === 'extra') {
-                if (isActive) {
-                    for (let d = 0; d < 7; d++) { let lbl = document.getElementById(`xtra-lbl-${w}-${d}`); if (lbl) lbl.style.display = 'flex'; }
-                } else {
-                    for (let d = 0; d < 7; d++) {
-                        let extraChk = document.getElementById(`extra-${w}-${d}`);
-                        if (extraChk) extraChk.checked = false;
-                        let lbl = document.getElementById(`xtra-lbl-${w}-${d}`);
-                        if (lbl) lbl.style.display = 'none';
-                        toggleExtra(w, d);
-                        toggleSmart(w, d);
-                    }
+                for (let d = 0; d < 7; d++) {
+                    let lbl = document.getElementById(`xtra-lbl-${w}-${d}`);
+                    if (lbl) lbl.style.display = 'flex';
                 }
                 calc();
             }
@@ -7264,7 +7682,23 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
             }
         }
         function toggleRates() { let el = document.getElementById('rate-content'); el.classList.toggle('show'); document.getElementById('rate-arrow').innerText = el.classList.contains('show') ? '▼' : '▶'; }
-        function toggleCard(id) { document.getElementById(id).classList.toggle('show'); document.getElementById('arrow-' + id).innerText = document.getElementById(id).classList.contains('show') ? '▼' : '▶'; }
+        function toggleCard(id) {
+let contentEl = document.getElementById(id);
+let arrowEl = document.getElementById('arrow-' + id);
+if (!contentEl) return;
+contentEl.classList.toggle('show');
+let isOpen = contentEl.classList.contains('show');
+if (arrowEl) arrowEl.innerText = isOpen ? '▼' : '▶';
+if (isOpen) {
+let cardEl = contentEl.closest('.pref-card') || contentEl;
+setTimeout(() => {
+let rect = cardEl.getBoundingClientRect();
+let headerOffset = 70;
+let targetY = rect.top + window.scrollY - Math.max(headerOffset, (window.innerHeight - Math.min(rect.height, window.innerHeight * 0.65)) / 2);
+window.scrollTo({ top: Math.max(0, targetY), behavior: 'smooth' });
+}, 40);
+}
+}
 
         function toggleWeek(w) {
             let el = document.getElementById('ws-' + w);
@@ -7412,9 +7846,10 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
         }
 
         function getEntitlement() {
-            const hire = document.getElementById('hire-date').value;
+            const hire = document.getElementById('hire-date')?.value;
             if (!hire) return 0;
-            const hireDate = new Date(hire);
+            const hireDate = parseHireDateObj(hire);
+            if (!hireDate || isNaN(hireDate.getTime())) return 0;
             const endOfYear = new Date(currentYear, 11, 31);
             const yrs = (endOfYear - hireDate) / (1000 * 60 * 60 * 24 * 365);
             if (yrs >= 30) return 6; if (yrs >= 24) return 5; if (yrs >= 15) return 4; if (yrs >= 5) return 3; if (yrs >= 1) return 2; return 1;
@@ -7456,7 +7891,9 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
             // 2. Now calculate the stats based on the freshly synced array
             let stats = getVacStats();
 
-            // 3. Update the UI
+            let hdStatic = document.getElementById('vac-hire-date-static');
+            let hdVal = document.getElementById('hire-date')?.value || '';
+            if (hdStatic) hdStatic.innerText = hdVal || '--/--/--';
             document.getElementById('vac-total-ent').innerText = `${stats.ent} Weeks`;
             document.getElementById('vac-blocks-left').innerText = `${stats.blocksLeft}`;
             document.getElementById('vac-days-left').innerText = `${stats.daysLeft}`;
@@ -7465,101 +7902,101 @@ if (el) el.value = r.toFixed(4); saveSettings(); calc();
         }
 
         function updateGhostRates() {
-let termEl = document.getElementById('contract-term');
-let term = termEl ? (parseInt(termEl.value) || 0) : 0;
-let refDate = currentPeriodId && periods[currentPeriodId - 1] ? new Date(periods[currentPeriodId - 1].startDateObj) : new Date();
-refDate.setHours(0, 0, 0, 0);
+            let termEl = document.getElementById('contract-term');
+            let term = termEl ? (parseInt(termEl.value) || 0) : 0;
+            let refDate = currentPeriodId && periods[currentPeriodId - 1] ? new Date(periods[currentPeriodId - 1].startDateObj) : new Date();
+            refDate.setHours(0, 0, 0, 0);
 
-let steps = [];
-for (let i = 1; i <= term; i++) {
-let val = parseFloat(document.getElementById(`r-val-${i}`)?.value) || 0;
-let type = document.getElementById(`r-type-${i}`)?.value || 'pct';
-let rawDate = document.getElementById(`r-date-${i}`)?.value || '';
-let dt = parseContractRowDate(rawDate);
-if (dt && val > 0) {
-steps.push({ yr: i, val: val, type: type, rawDate: rawDate, dt: dt });
-}
-}
-steps.sort((a, b) => (a.dt.getTime() - b.dt.getTime()) || (a.yr - b.yr));
+            let steps = [];
+            for (let i = 1; i <= term; i++) {
+                let val = parseFloat(document.getElementById(`r-val-${i}`)?.value) || 0;
+                let type = document.getElementById(`r-type-${i}`)?.value || 'pct';
+                let rawDate = document.getElementById(`r-date-${i}`)?.value || '';
+                let dt = parseContractRowDate(rawDate);
+                if (dt && val > 0) {
+                    steps.push({ yr: i, val: val, type: type, rawDate: rawDate, dt: dt });
+                }
+            }
+            steps.sort((a, b) => (a.dt.getTime() - b.dt.getTime()) || (a.yr - b.yr));
 
-for (let l = 1; l <= 5; l++) {
-let inputEl = document.getElementById('rateL' + l);
-if (!inputEl) continue;
-let running = baseRates[l];
-for (let s of steps) {
-if (refDate.getTime() >= s.dt.getTime()) {
-if (s.type === 'pct') running += (running * (s.val / 100));
-else running += s.val;
-}
-}
-inputEl.placeholder = running.toFixed(2);
-}
+            for (let l = 1; l <= 5; l++) {
+                let inputEl = document.getElementById('rateL' + l);
+                if (!inputEl) continue;
+                let running = baseRates[l];
+                for (let s of steps) {
+                    if (refDate.getTime() >= s.dt.getTime()) {
+                        if (s.type === 'pct') running += (running * (s.val / 100));
+                        else running += s.val;
+                    }
+                }
+                inputEl.placeholder = running.toFixed(2);
+            }
 
-let banner = document.getElementById('contract-live-banner');
-if (!banner) return;
+            let banner = document.getElementById('contract-live-banner');
+            if (!banner) return;
 
-if (term === 0 || steps.length === 0) {
-banner.style.display = 'none';
-syncAnchorLockUI();
-return;
-}
+            if (term === 0 || steps.length === 0) {
+                banner.style.display = 'none';
+                syncAnchorLockUI();
+                return;
+            }
 
-let today = new Date();
-today.setHours(0, 0, 0, 0);
+            let today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-let activeTier = 0;
-let activeStep = null;
-let nextStep = null;
+            let activeTier = 0;
+            let activeStep = null;
+            let nextStep = null;
 
-for (let i = 0; i < steps.length; i++) {
-if (today.getTime() >= steps[i].dt.getTime()) {
-activeTier = i + 1;
-activeStep = steps[i];
-} else if (!nextStep) {
-nextStep = steps[i];
-}
-}
+            for (let i = 0; i < steps.length; i++) {
+                if (today.getTime() >= steps[i].dt.getTime()) {
+                    activeTier = i + 1;
+                    activeStep = steps[i];
+                } else if (!nextStep) {
+                    nextStep = steps[i];
+                }
+            }
 
-let liveRates = {};
-for (let l = 5; l >= 1; l--) {
-let r = getAnchorBaseRate(l);
-for (let i = 0; i < activeTier; i++) {
-let st = steps[i];
-if (st.type === 'pct') r += (r * (st.val / 100));
-else r += st.val;
-}
-liveRates[l] = r;
-}
+            let liveRates = {};
+            for (let l = 5; l >= 1; l--) {
+                let r = getAnchorBaseRate(l);
+                for (let i = 0; i < activeTier; i++) {
+                    let st = steps[i];
+                    if (st.type === 'pct') r += (r * (st.val / 100));
+                    else r += st.val;
+                }
+                liveRates[l] = r;
+            }
 
-let tierHeader = activeStep
-? `ACTIVE CONTRACT RATES — TIER ${activeTier} (EFF. ${activeStep.rawDate})`
-: `PRE-EFFECTIVE BASELINE (TIER 1 STARTS ${steps[0].rawDate})`;
+            let tierHeader = activeStep
+                ? `ACTIVE CONTRACT RATES — TIER ${activeTier} (EFF. ${activeStep.rawDate})`
+                : `PRE-EFFECTIVE BASELINE (TIER 1 STARTS ${steps[0].rawDate})`;
 
-let previewRates = {};
-if (!activeStep && steps[0]) {
-for (let l = 5; l >= 1; l--) {
-let r = getAnchorBaseRate(l);
-if (steps[0].type === 'pct') r += (r * (steps[0].val / 100));
-else r += steps[0].val;
-previewRates[l] = r;
-}
-}
+            let previewRates = {};
+            if (!activeStep && steps[0]) {
+                for (let l = 5; l >= 1; l--) {
+                    let r = getAnchorBaseRate(l);
+                    if (steps[0].type === 'pct') r += (r * (steps[0].val / 100));
+                    else r += steps[0].val;
+                    previewRates[l] = r;
+                }
+            }
 
-let nextLine = '';
-if (nextStep) {
-let stepFmt = nextStep.type === 'pct' ? `+${nextStep.val}%` : `+$${nextStep.val.toFixed(2)}/hr`;
-if (!activeStep) {
-let bidLvl = document.getElementById('biddedRate')?.value || 5;
-nextLine = `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(77,173,255,0.3); font-size:10px; font-family:monospace; color:var(--success); display:flex; justify-content:space-between;"><span>NEXT: ${stepFmt} ON ${nextStep.rawDate}</span><span>L${bidLvl} → $${previewRates[bidLvl].toFixed(2)}</span></div>`;
-} else {
-nextLine = `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(77,173,255,0.3); font-size:10px; font-family:monospace; color:var(--gold);">NEXT STEP: ${stepFmt} ON ${nextStep.rawDate}</div>`;
-}
-} else {
-nextLine = `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(77,173,255,0.3); font-size:10px; font-family:monospace; color:var(--success);">FINAL CONTRACT TIER ACTIVE</div>`;
-}
+            let nextLine = '';
+            if (nextStep) {
+                let stepFmt = nextStep.type === 'pct' ? `+${nextStep.val}%` : `+$${nextStep.val.toFixed(2)}/hr`;
+                if (!activeStep) {
+                    let bidLvl = document.getElementById('biddedRate')?.value || 5;
+                    nextLine = `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(77,173,255,0.3); font-size:10px; font-family:monospace; color:var(--success); display:flex; justify-content:space-between;"><span>NEXT: ${stepFmt} ON ${nextStep.rawDate}</span><span>L${bidLvl} → $${previewRates[bidLvl].toFixed(2)}</span></div>`;
+                } else {
+                    nextLine = `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(77,173,255,0.3); font-size:10px; font-family:monospace; color:var(--gold);">NEXT RAISE: ${stepFmt} ON ${nextStep.rawDate}</div>`;
+                }
+            } else {
+                nextLine = `<div style="margin-top:6px; padding-top:6px; border-top:1px dashed rgba(77,173,255,0.3); font-size:10px; font-family:monospace; color:var(--success);">FINAL CONTRACT TIER ACTIVE</div>`;
+            }
 
-banner.style.display = 'block';
-banner.innerHTML = `
+            banner.style.display = 'block';
+            banner.innerHTML = `
 <div style="font-size:10px; font-weight:900; color:var(--accent); letter-spacing:0.5px; margin-bottom:6px;">${tierHeader}</div>
 <div style="display:grid; grid-template-columns: repeat(5, 1fr); gap:4px; text-align:center; font-family:monospace;">
 <div style="background:#111; border:1px solid #333; border-radius:4px; padding:4px 2px;"><div style="font-size:9px; color:#888;">L5</div><div style="font-size:11px; font-weight:bold; color:#fff;">$${liveRates[5].toFixed(2)}</div></div>
@@ -7570,8 +8007,8 @@ banner.innerHTML = `
 </div>
 ${nextLine}
 `;
-syncAnchorLockUI();
-}
+            syncAnchorLockUI();
+        }
 
         function addDistRow(name, amt) {
             let container = document.getElementById('dist-list');
@@ -7665,9 +8102,9 @@ syncAnchorLockUI();
             s.distAccounts = distArr; // FIX: The missing pipe to the save file
             s.wad = document.getElementById('wad-select').value;
             s['hire-date'] = document.getElementById('hire-date').value;
-            s['hire-year-manual'] = document.getElementById('hire-year-manual').value;
-            s.rawW2 = document.getElementById('rawW2').value;
-            s.prevW2 = document.getElementById('prevW2').value;
+            s['hire-year-manual'] = document.getElementById('hire-year-manual')?.value || '';
+            s.rawW2 = (document.getElementById('vacRawW2')?.value || document.getElementById('rawW2')?.value || '');
+            s.prevW2 = (document.getElementById('vacPrevW2')?.value || document.getElementById('prevW2')?.value || '');
             s.baselineAnchorDate = document.getElementById('baseline-anchor-date') ? document.getElementById('baseline-anchor-date').value : '';
             s.customRotationName = document.getElementById('custom-rotation-name').value;
             s.customWeekScaler = document.getElementById('custom-week-scaler').value;
@@ -7680,17 +8117,19 @@ syncAnchorLockUI();
             s.filterLen10 = document.getElementById('filter-len-10').checked;
             s.filterLen8 = document.getElementById('filter-len-8').checked;
             if (!masterPSInjectSilos[currentYear]) masterPSInjectSilos[currentYear] = {};
-for (let q = 1; q <= 4; q++) {
-let isChecked = Boolean(document.getElementById('ps-inject-q' + q)?.checked);
-masterPSInjectSilos[currentYear][q] = isChecked;
-delete s['ps-inject-q' + q];
-delete s['psInjectQ' + q];
-}
-s.psInjectSilos = masterPSInjectSilos;
-masterVacationSilos[currentYear] = vacationDates; // Load active dates into the silo
+            for (let q = 1; q <= 4; q++) {
+                let isChecked = Boolean(document.getElementById('ps-inject-q' + q)?.checked);
+                masterPSInjectSilos[currentYear][q] = isChecked;
+                delete s['ps-inject-q' + q];
+                delete s['psInjectQ' + q];
+            }
+            s.psInjectSilos = masterPSInjectSilos;
+            masterVacationSilos[currentYear] = vacationDates; // Load active dates into the silo
             s.vacationSilos = masterVacationSilos; // Save the master object to the phone
             s.lastYear = currentYear; // Remember selected year
-            s.ytdBaseline = ytdBaseline;
+            masterYtdSilos[currentYear] = ytdBaseline;
+            s.ytdSilos = masterYtdSilos;
+            delete s.ytdBaseline;
             localStorage.setItem('app_settings_v30', JSON.stringify(s));
             updateGhostRates();
             updateLoanBalances(); // SURGICAL STRIKE: Update the green labels on save
@@ -7735,7 +8174,14 @@ masterVacationSilos[currentYear] = vacationDates; // Load active dates into the 
                     let ys = document.getElementById('year-selector');
                     if (ys) ys.value = currentYear;
                 }
-                ytdBaseline = s.ytdBaseline || {};
+                if (s.ytdSilos) {
+                    masterYtdSilos = s.ytdSilos;
+                } else if (s.ytdBaseline && Object.keys(s.ytdBaseline).length > 0) {
+                    masterYtdSilos = { '2026': s.ytdBaseline };
+                } else {
+                    masterYtdSilos = {};
+                }
+                ytdBaseline = masterYtdSilos[currentYear] || {};
                 if (s['contract-term'] !== undefined) {
                     let ctEl = document.getElementById('contract-term');
                     if (ctEl) ctEl.value = s['contract-term'];
@@ -7779,7 +8225,19 @@ masterVacationSilos[currentYear] = vacationDates; // Load active dates into the 
                 }
                 if (s.customRotationName) document.getElementById('custom-rotation-name').value = s.customRotationName;
                 if (s.customWeekScaler) document.getElementById('custom-week-scaler').value = s.customWeekScaler;
-                if (s.vacRateOverride) document.getElementById('vacRateOverride').value = s.vacRateOverride;
+                if (s['hire-date'] && s['hire-date'].includes('-')) {
+                    let hp = s['hire-date'].split('-');
+                    if (hp.length === 3) {
+                        let migratedHd = `${hp[1]}/${hp[2]}/${hp[0].slice(-2)}`;
+                        let hdEl = document.getElementById('hire-date');
+                        if (hdEl) hdEl.value = migratedHd;
+                    }
+                }
+                let hdStaticInit = document.getElementById('vac-hire-date-static');
+                if (hdStaticInit) hdStaticInit.innerText = document.getElementById('hire-date')?.value || '--/--/--';
+                if (s.vacRateOverride && document.getElementById('vacRateOverride')) {
+                    document.getElementById('vacRateOverride').value = s.vacRateOverride;
+                }
                 if (s.filterTypeD !== undefined) document.getElementById('filter-type-d').checked = s.filterTypeD;
                 if (s.filterTypeA !== undefined) document.getElementById('filter-type-a').checked = s.filterTypeA;
                 if (s.filterTypeN !== undefined) document.getElementById('filter-type-n').checked = s.filterTypeN;
@@ -7787,25 +8245,25 @@ masterVacationSilos[currentYear] = vacationDates; // Load active dates into the 
                 if (s.filterLen10 !== undefined) document.getElementById('filter-len-10').checked = s.filterLen10;
                 if (s.filterLen8 !== undefined) document.getElementById('filter-len-8').checked = s.filterLen8;
                 if (s.psInjectSilos) {
-masterPSInjectSilos = s.psInjectSilos;
-} else {
-masterPSInjectSilos = {};
-let migrated = {};
-let hasLegacy = false;
-for (let q = 1; q <= 4; q++) {
-if (s['psInjectQ' + q] || s['ps-inject-q' + q]) {
-migrated[q] = true;
-hasLegacy = true;
-}
-}
-if (hasLegacy) masterPSInjectSilos[currentYear] = migrated;
-}
-let activePSYear = masterPSInjectSilos[currentYear] || {};
-for (let q = 1; q <= 4; q++) {
-let cb = document.getElementById('ps-inject-q' + q);
-if (cb) cb.checked = Boolean(activePSYear[q]);
-if (typeof updatePSInjectUI === "function") updatePSInjectUI(q);
-}
+                    masterPSInjectSilos = s.psInjectSilos;
+                } else {
+                    masterPSInjectSilos = {};
+                    let migrated = {};
+                    let hasLegacy = false;
+                    for (let q = 1; q <= 4; q++) {
+                        if (s['psInjectQ' + q] || s['ps-inject-q' + q]) {
+                            migrated[q] = true;
+                            hasLegacy = true;
+                        }
+                    }
+                    if (hasLegacy) masterPSInjectSilos[currentYear] = migrated;
+                }
+                let activePSYear = masterPSInjectSilos[currentYear] || {};
+                for (let q = 1; q <= 4; q++) {
+                    let cb = document.getElementById('ps-inject-q' + q);
+                    if (cb) cb.checked = Boolean(activePSYear[q]);
+                    if (typeof updatePSInjectUI === "function") updatePSInjectUI(q);
+                }
                 toggleCustomCrew();
                 toggle8hrDiffs();
             }
@@ -7954,47 +8412,47 @@ if (typeof updatePSInjectUI === "function") updatePSInjectUI(q);
                 }
 
                 let chk = document.getElementById(`ps-inject-q${q}`);
-if (chk && chk.checked) {
-let hrs = parseFloat(fin.innerText) || 0;
-let psUid = `ps-auto-${currentYear}-q${q}`;
-let legacyUid = `ps-auto-q${q}`;
-if (q === 4) {
-let nextYear = currentYear + 1;
-let nextKey = `ledger_${nextYear}_final`;
-let remoteLedger = JSON.parse(localStorage.getItem(nextKey) || '{}');
-let remoteUpdated = false;
-for (let pid in remoteLedger) {
-if (remoteLedger[pid].adjustments) {
-let adj = remoteLedger[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
-if (adj) {
-adj.id = psUid;
-adj.hrs = hrs;
-remoteUpdated = true;
-}
-}
-}
-if (remoteUpdated) localStorage.setItem(nextKey, JSON.stringify(remoteLedger));
-} else {
-for (let pid in ledgerData) {
-if (ledgerData[pid].adjustments) {
-let adj = ledgerData[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
-if (adj) {
-adj.id = psUid;
-adj.hrs = hrs;
-if (currentPeriodId == pid) {
-let hrsInput = document.querySelector(`.ps-card[data-uid="${psUid}"] .ps-hrs, .ps-card[data-uid="${legacyUid}"] .ps-hrs`);
-if (hrsInput && document.activeElement !== hrsInput) hrsInput.value = hrs;
-}
-ledgerUpdated = true;
-}
-}
-}
-}
-}
-}
-if (ledgerUpdated) { localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData)); }
-if (currentPeriodId) calc();
-}
+                if (chk && chk.checked) {
+                    let hrs = parseFloat(fin.innerText) || 0;
+                    let psUid = `ps-auto-${currentYear}-q${q}`;
+                    let legacyUid = `ps-auto-q${q}`;
+                    if (q === 4) {
+                        let nextYear = currentYear + 1;
+                        let nextKey = `ledger_${nextYear}_final`;
+                        let remoteLedger = JSON.parse(localStorage.getItem(nextKey) || '{}');
+                        let remoteUpdated = false;
+                        for (let pid in remoteLedger) {
+                            if (remoteLedger[pid].adjustments) {
+                                let adj = remoteLedger[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
+                                if (adj) {
+                                    adj.id = psUid;
+                                    adj.hrs = hrs;
+                                    remoteUpdated = true;
+                                }
+                            }
+                        }
+                        if (remoteUpdated) localStorage.setItem(nextKey, JSON.stringify(remoteLedger));
+                    } else {
+                        for (let pid in ledgerData) {
+                            if (ledgerData[pid].adjustments) {
+                                let adj = ledgerData[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
+                                if (adj) {
+                                    adj.id = psUid;
+                                    adj.hrs = hrs;
+                                    if (currentPeriodId == pid) {
+                                        let hrsInput = document.querySelector(`.ps-card[data-uid="${psUid}"] .ps-hrs, .ps-card[data-uid="${legacyUid}"] .ps-hrs`);
+                                        if (hrsInput && document.activeElement !== hrsInput) hrsInput.value = hrs;
+                                    }
+                                    ledgerUpdated = true;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            if (ledgerUpdated) { localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData)); }
+            if (currentPeriodId) calc();
+        }
 
         function togglePSPreview(q) {
             let drawer = document.getElementById(`ps-preview-q${q}`);
@@ -8165,185 +8623,189 @@ if (currentPeriodId) calc();
         }
 
         function injectProfitSharingCard(q) {
-let y = currentYear;
-let qEnd;
-if (q === 1) qEnd = new Date(y, 2, 31);
-else if (q === 2) qEnd = new Date(y, 5, 30);
-else if (q === 3) qEnd = new Date(y, 8, 30);
-else if (q === 4) qEnd = new Date(y, 11, 31);
+            let y = currentYear;
+            let qEnd;
+            if (q === 1) qEnd = new Date(y, 2, 31);
+            else if (q === 2) qEnd = new Date(y, 5, 30);
+            else if (q === 3) qEnd = new Date(y, 8, 30);
+            else if (q === 4) qEnd = new Date(y, 11, 31);
 
-let targetDate = new Date(qEnd);
-targetDate.setDate(targetDate.getDate() + 45);
-if (targetDate.getDay() === 6) targetDate.setDate(targetDate.getDate() - 1);
-else if (targetDate.getDay() === 0) targetDate.setDate(targetDate.getDate() - 2);
-targetDate.setHours(0, 0, 0, 0);
+            let targetDate = new Date(qEnd);
+            targetDate.setDate(targetDate.getDate() + 45);
+            if (targetDate.getDay() === 6) targetDate.setDate(targetDate.getDate() - 1);
+            else if (targetDate.getDay() === 0) targetDate.setDate(targetDate.getDate() - 2);
+            targetDate.setHours(0, 0, 0, 0);
 
-let targetYear = (q === 4) ? (y + 1) : y;
-let shiftDays = (targetYear - 2026) * 364;
-let yearStart = new Date(scheduleAnchor);
-yearStart.setDate(scheduleAnchor.getDate() + shiftDays);
+            let targetYear = (q === 4) ? (y + 1) : y;
+            let shiftDays = (targetYear - 2026) * 364;
+            let yearStart = new Date(scheduleAnchor);
+            yearStart.setDate(scheduleAnchor.getDate() + shiftDays);
 
-let pid = null;
-let matchedPayLabel = "";
-for (let i = 0; i < 26; i++) {
-let pS = new Date(yearStart); pS.setDate(yearStart.getDate() + (i * 14));
-let pE = new Date(pS); pE.setDate(pS.getDate() + 13);
-let pD = new Date(pE); pD.setDate(pE.getDate() + 9);
-if (isBankHoliday(pD)) pD.setDate(pD.getDate() - 3);
-pD.setHours(0, 0, 0, 0);
-if (pD.getTime() >= targetDate.getTime()) {
-pid = i + 1;
-matchedPayLabel = fmtM(pD);
-break;
-}
-}
+            let pid = null;
+            let matchedPayLabel = "";
+            for (let i = 0; i < 26; i++) {
+                let pS = new Date(yearStart); pS.setDate(yearStart.getDate() + (i * 14));
+                let pE = new Date(pS); pE.setDate(pS.getDate() + 13);
+                let pD = new Date(pE); pD.setDate(pE.getDate() + 9);
+                if (isBankHoliday(pD)) pD.setDate(pD.getDate() - 3);
+                pD.setHours(0, 0, 0, 0);
+                if (pD.getTime() >= targetDate.getTime()) {
+                    pid = i + 1;
+                    matchedPayLabel = fmtM(pD);
+                    break;
+                }
+            }
 
-if (!pid) {
-showToast("Could not find matching period for PS injection.");
-return;
-}
+            if (!pid) {
+                showToast("Could not find matching period for PS injection.");
+                return;
+            }
 
-let targetWeek = 2;
-let psUid = `ps-auto-${y}-q${q}`;
-let legacyUid = `ps-auto-q${q}`;
-let hrs = parseFloat(document.getElementById(`ps-fin-q${q}`).innerText) || 0;
+            let targetWeek = 2;
+            let psUid = `ps-auto-${y}-q${q}`;
+            let legacyUid = `ps-auto-q${q}`;
+            let hrs = parseFloat(document.getElementById(`ps-fin-q${q}`).innerText) || 0;
 
-if (targetYear === currentYear) {
-for (let k in ledgerData) {
-if (parseInt(k) !== pid && ledgerData[k] && ledgerData[k].adjustments) {
-ledgerData[k].adjustments = ledgerData[k].adjustments.filter(a => a.id !== psUid && a.id !== legacyUid);
-}
-}
-if (!ledgerData[pid]) ledgerData[pid] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
-if (!ledgerData[pid].adjustments) ledgerData[pid].adjustments = [];
+            if (targetYear === currentYear) {
+                for (let k in ledgerData) {
+                    if (parseInt(k) !== pid && ledgerData[k] && ledgerData[k].adjustments) {
+                        ledgerData[k].adjustments = ledgerData[k].adjustments.filter(a => a.id !== psUid && a.id !== legacyUid);
+                    }
+                }
+                if (!ledgerData[pid]) ledgerData[pid] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
+                if (!ledgerData[pid].adjustments) ledgerData[pid].adjustments = [];
 
-let existing = ledgerData[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
-if (existing) {
-existing.id = psUid;
-existing.week = targetWeek;
-existing.hrs = hrs;
-} else {
-ledgerData[pid].adjustments.push({
-id: psUid,
-week: targetWeek,
-isPS: true,
-hrs: hrs,
-rate: "0",
-rateAmt: 0,
-incPct: 0,
-xtra: false,
-express: true,
-verified: false,
-tax401k: 0, taxFed: 0, taxState: 0, taxCity: 0, taxFica: 0, taxMed: 0, taxDues: 0, taxDuesHrs: 0
-});
-}
-localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData));
+                let existing = ledgerData[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
+                if (existing) {
+                    existing.id = psUid;
+                    existing.week = targetWeek;
+                    existing.hrs = hrs;
+                } else {
+                    ledgerData[pid].adjustments.push({
+                        id: psUid,
+                        week: targetWeek,
+                        isPS: true,
+                        hrs: hrs,
+                        rate: "0",
+                        rateAmt: 0,
+                        incPct: 0,
+                        xtra: false,
+                        express: true,
+                        verified: false,
+                        tax401k: 0, taxFed: 0, taxState: 0, taxCity: 0, taxFica: 0, taxMed: 0, taxDues: 0, taxDuesHrs: 0
+                    });
+                }
+                localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData));
 
-if (currentPeriodId === pid) {
-let wrapper = document.getElementById(`adj-wrapper-${targetWeek}`);
-let domCard = document.querySelector(`.ps-card[data-uid="${psUid}"], .ps-card[data-uid="${legacyUid}"]`);
-if (wrapper && !domCard) {
-let adjData = ledgerData[pid].adjustments.find(a => a.id === psUid);
-addAdjustmentCard(pid, adjData, targetWeek, 'ps');
-} else if (domCard) {
-domCard.setAttribute('data-uid', psUid);
-domCard.setAttribute('data-week', targetWeek);
-let hrsInput = domCard.querySelector('.ps-hrs');
-if (hrsInput) hrsInput.value = hrs;
-}
-calc();
-}
-showToast(`Q${q} Profit Sharing staged for Check #${pid} (${matchedPayLabel})!`, () => openRoutedAdjustmentFromToast(currentYear, pid, psUid));
-} else {
-let nextKey = `ledger_${targetYear}_final`;
-let remoteLedger = JSON.parse(localStorage.getItem(nextKey) || '{}');
-for (let k in remoteLedger) {
-if (parseInt(k) !== pid && remoteLedger[k] && remoteLedger[k].adjustments) {
-remoteLedger[k].adjustments = remoteLedger[k].adjustments.filter(a => a.id !== psUid && a.id !== legacyUid);
-}
-}
-if (!remoteLedger[pid]) remoteLedger[pid] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
-if (!remoteLedger[pid].adjustments) remoteLedger[pid].adjustments = [];
+                if (currentPeriodId === pid) {
+                    let wrapper = document.getElementById(`adj-wrapper-${targetWeek}`);
+                    let domCard = document.querySelector(`.ps-card[data-uid="${psUid}"], .ps-card[data-uid="${legacyUid}"]`);
+                    if (wrapper && !domCard) {
+                        let adjData = ledgerData[pid].adjustments.find(a => a.id === psUid);
+                        addAdjustmentCard(pid, adjData, targetWeek, 'ps');
+                    } else if (domCard) {
+                        domCard.setAttribute('data-uid', psUid);
+                        domCard.setAttribute('data-week', targetWeek);
+                        let hrsInput = domCard.querySelector('.ps-hrs');
+                        if (hrsInput) hrsInput.value = hrs;
+                    }
+                    calc();
+                }
+                showToast(`Q${q} Profit Sharing staged for Check #${pid} (${matchedPayLabel})!`, () => openRoutedAdjustmentFromToast(currentYear, pid, psUid));
+            } else {
+                let nextKey = `ledger_${targetYear}_final`;
+                let remoteLedger = JSON.parse(localStorage.getItem(nextKey) || '{}');
+                for (let k in remoteLedger) {
+                    if (parseInt(k) !== pid && remoteLedger[k] && remoteLedger[k].adjustments) {
+                        remoteLedger[k].adjustments = remoteLedger[k].adjustments.filter(a => a.id !== psUid && a.id !== legacyUid);
+                    }
+                }
+                if (!remoteLedger[pid]) remoteLedger[pid] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
+                if (!remoteLedger[pid].adjustments) remoteLedger[pid].adjustments = [];
 
-let existing = remoteLedger[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
-if (existing) {
-existing.id = psUid;
-existing.week = targetWeek;
-existing.hrs = hrs;
-} else {
-remoteLedger[pid].adjustments.push({
-id: psUid,
-week: targetWeek,
-isPS: true,
-hrs: hrs,
-rate: "0",
-rateAmt: 0,
-incPct: 0,
-xtra: false,
-express: true,
-verified: false,
-tax401k: 0, taxFed: 0, taxState: 0, taxCity: 0, taxFica: 0, taxMed: 0, taxDues: 0, taxDuesHrs: 0
-});
-}
-localStorage.setItem(nextKey, JSON.stringify(remoteLedger));
-showToast(`Q4 Profit Sharing staged for ${targetYear} Check #${pid} (${matchedPayLabel})!`, () => openRoutedAdjustmentFromToast(targetYear, pid, psUid));
-}
-}
+                let existing = remoteLedger[pid].adjustments.find(a => a.id === psUid || a.id === legacyUid);
+                if (existing) {
+                    existing.id = psUid;
+                    existing.week = targetWeek;
+                    existing.hrs = hrs;
+                } else {
+                    remoteLedger[pid].adjustments.push({
+                        id: psUid,
+                        week: targetWeek,
+                        isPS: true,
+                        hrs: hrs,
+                        rate: "0",
+                        rateAmt: 0,
+                        incPct: 0,
+                        xtra: false,
+                        express: true,
+                        verified: false,
+                        tax401k: 0, taxFed: 0, taxState: 0, taxCity: 0, taxFica: 0, taxMed: 0, taxDues: 0, taxDuesHrs: 0
+                    });
+                }
+                localStorage.setItem(nextKey, JSON.stringify(remoteLedger));
+                showToast(`Q4 Profit Sharing staged for ${targetYear} Check #${pid} (${matchedPayLabel})!`, () => openRoutedAdjustmentFromToast(targetYear, pid, psUid));
+            }
+        }
 
-function removeProfitSharingCard(q) {
-let psUid = `ps-auto-${currentYear}-q${q}`;
-let legacyUid = `ps-auto-q${q}`;
-if (q === 4) {
-let nextYear = currentYear + 1;
-let nextKey = `ledger_${nextYear}_final`;
-let remoteLedger = JSON.parse(localStorage.getItem(nextKey) || '{}');
-let foundRemote = false;
-for (let pid in remoteLedger) {
-if (remoteLedger[pid].adjustments) {
-let idx = remoteLedger[pid].adjustments.findIndex(a => a.id === psUid || a.id === legacyUid);
-if (idx > -1) {
-remoteLedger[pid].adjustments.splice(idx, 1);
-foundRemote = true;
-}
-}
-}
-if (foundRemote) localStorage.setItem(nextKey, JSON.stringify(remoteLedger));
-}
-let found = false;
-for (let pid in ledgerData) {
-if (ledgerData[pid].adjustments) {
-let idx = ledgerData[pid].adjustments.findIndex(a => a.id === psUid || a.id === legacyUid);
-if (idx > -1) {
-ledgerData[pid].adjustments.splice(idx, 1);
-found = true;
-if (currentPeriodId == pid) {
-let card = document.querySelector(`.ps-card[data-uid="${psUid}"], .ps-card[data-uid="${legacyUid}"]`);
-if (card) card.remove();
-calc();
-}
-}
-}
-}
-if (found) localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData));
-}
+        function removeProfitSharingCard(q) {
+            let psUid = `ps-auto-${currentYear}-q${q}`;
+            let legacyUid = `ps-auto-q${q}`;
+            if (q === 4) {
+                let nextYear = currentYear + 1;
+                let nextKey = `ledger_${nextYear}_final`;
+                let remoteLedger = JSON.parse(localStorage.getItem(nextKey) || '{}');
+                let foundRemote = false;
+                for (let pid in remoteLedger) {
+                    if (remoteLedger[pid].adjustments) {
+                        let idx = remoteLedger[pid].adjustments.findIndex(a => a.id === psUid || a.id === legacyUid);
+                        if (idx > -1) {
+                            remoteLedger[pid].adjustments.splice(idx, 1);
+                            foundRemote = true;
+                        }
+                    }
+                }
+                if (foundRemote) localStorage.setItem(nextKey, JSON.stringify(remoteLedger));
+            }
+            let found = false;
+            for (let pid in ledgerData) {
+                if (ledgerData[pid].adjustments) {
+                    let idx = ledgerData[pid].adjustments.findIndex(a => a.id === psUid || a.id === legacyUid);
+                    if (idx > -1) {
+                        ledgerData[pid].adjustments.splice(idx, 1);
+                        found = true;
+                        if (currentPeriodId == pid) {
+                            let card = document.querySelector(`.ps-card[data-uid="${psUid}"], .ps-card[data-uid="${legacyUid}"]`);
+                            if (card) card.remove();
+                            calc();
+                        }
+                    }
+                }
+            }
+            if (found) localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData));
+        }
 
         function loadLedger() { let saved = localStorage.getItem(`ledger_${currentYear}_final`); if (saved) ledgerData = JSON.parse(saved); else ledgerData = {}; }
         function loadPeriodData(id) {
-            let data = ledgerData[id]; auditData[id] = (data && data.actuals) ? data.actuals : {};
+            let data = ledgerData[id];
+            auditData[id] = (data && data.actuals) ? data.actuals : {};
+            let auditEl = document.getElementById('audit-toggle');
+            let dlEl = document.getElementById('summary-deductions');
+            let dedBtnEl = document.getElementById('deductions-btn');
             if (data && data.inputs && data.inputs['audit-toggle']) {
-                document.getElementById('audit-toggle').checked = true;
-                let dl = document.getElementById('summary-deductions');
-                dl.classList.add('audit-mode');
-                dl.style.display = 'flex';
-                let btn = document.getElementById('deductions-btn');
-                if (btn) { btn.innerText = 'DEDUCTIONS ▲'; btn.style.background = 'rgba(255, 82, 82, 0.15)'; }
+                if (auditEl) auditEl.checked = true;
+                if (dlEl) {
+                    dlEl.classList.add('audit-mode');
+                    dlEl.style.display = 'flex';
+                }
+                if (dedBtnEl) { dedBtnEl.innerText = 'DEDUCTIONS ▲'; dedBtnEl.style.background = 'rgba(255, 82, 82, 0.15)'; }
             } else {
-                document.getElementById('audit-toggle').checked = false;
-                let dl = document.getElementById('summary-deductions');
-                dl.classList.remove('audit-mode');
-                dl.style.display = 'none';
-                let btn = document.getElementById('deductions-btn');
-                if (btn) { btn.innerText = 'DEDUCTIONS ▼'; btn.style.background = 'transparent'; }
+                if (auditEl) auditEl.checked = false;
+                if (dlEl) {
+                    dlEl.classList.remove('audit-mode');
+                    dlEl.style.display = 'none';
+                }
+                if (dedBtnEl) { dedBtnEl.innerText = 'DEDUCTIONS ▼'; dedBtnEl.style.background = 'transparent'; }
             }
             document.querySelectorAll('#calculator-view input').forEach(el => { if (el.type == 'checkbox' && el.id !== 'audit-toggle') el.checked = false; else if (el.type != 'hidden' && !el.classList.contains('d-input')) el.value = ""; });
             document.querySelectorAll('.btn-12').forEach(b => b.classList.remove('active')); document.querySelectorAll('.day-card').forEach(c => { c.classList.remove('ro-active'); c.classList.remove('status-hol'); c.classList.remove('status-xtra'); c.classList.remove('status-vac'); });
@@ -8530,12 +8992,27 @@ if (found) localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(le
             let existingVal = targetInput ? targetInput.value : '';
             if (existingVal && existingVal.includes('/')) {
                 let p = existingVal.split('/');
-                let y = p[2].length === 4 ? p[2] : `20${p[2]}`;
-                lcCurrentDate = new Date(`${y}-${p[0]}-${p[1]}T12:00:00`);
+                let y = p[2].length === 4 ? parseInt(p[2], 10) : (2000 + parseInt(p[2], 10));
+                lcCurrentDate = new Date(y, parseInt(p[0], 10) - 1, parseInt(p[1], 10), 12, 0, 0);
                 if (isNaN(lcCurrentDate.getTime())) lcCurrentDate = new Date();
             } else if (existingVal) {
                 lcCurrentDate = new Date(existingVal + 'T12:00:00');
                 if (isNaN(lcCurrentDate.getTime())) lcCurrentDate = new Date();
+            } else if (inputId && /^r-date-[2-6]$/.test(inputId)) {
+                let rowIdx = parseInt(inputId.split('-')[2], 10);
+                let baseYear = new Date().getFullYear();
+                let foundPrev = false;
+                for (let pIdx = rowIdx - 1; pIdx >= 1; pIdx--) {
+                    let prevVal = document.getElementById(`r-date-${pIdx}`)?.value || '';
+                    let prevDt = parseContractRowDate(prevVal);
+                    if (prevDt) {
+                        baseYear = prevDt.getFullYear() + (rowIdx - pIdx);
+                        foundPrev = true;
+                        break;
+                    }
+                }
+                if (!foundPrev) baseYear = new Date().getFullYear() + (rowIdx - 1);
+                lcCurrentDate = new Date(baseYear, 8, 1, 12, 0, 0);
             } else {
                 lcCurrentDate = new Date();
             }
@@ -8570,17 +9047,17 @@ if (found) localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(le
                 return;
             }
 
-            // 2. Standard Logic for everything else
-let formatStr = `${parts[1]}/${parts[2]}/${parts[0]}`;
-document.getElementById(lcTargetInputId).value = formatStr;
-saveSettings();
-if (lcTargetInputId && lcTargetInputId.startsWith('r-date-')) {
-updateProjectedUI();
-calc();
-} else if (lcTargetInputId.includes('start')) {
-calc();
-}
-closeLoanCalendar();
+            let yy = String(parts[0]).slice(-2);
+            let formatStr = `${parts[1]}/${parts[2]}/${yy}`;
+            document.getElementById(lcTargetInputId).value = formatStr;
+            saveSettings();
+            if (lcTargetInputId && lcTargetInputId.startsWith('r-date-')) {
+                updateProjectedUI();
+                calc();
+            } else if (lcTargetInputId.includes('start')) {
+                calc();
+            }
+            closeLoanCalendar();
         }
         function lcRender() {
             const mNames = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
@@ -8600,7 +9077,9 @@ closeLoanCalendar();
             let selectedStr = rawSel;
             if (rawSel && rawSel.includes('/')) {
                 let p = rawSel.split('/');
-                selectedStr = `20${p[2]}-${p[0]}-${p[1]}`;
+                let yyNum = parseInt(p[2], 10);
+                let fullYr = p[2].length === 4 ? yyNum : (yyNum >= 60 ? 1900 + yyNum : 2000 + yyNum);
+                selectedStr = `${fullYr}-${String(p[0]).padStart(2, '0')}-${String(p[1]).padStart(2, '0')}`;
             }
             for (let d = 1; d <= daysInMonth; d++) {
                 let dStr = `${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
@@ -8621,15 +9100,17 @@ closeLoanCalendar();
             }
             input.value = formatted;
 
-            if (val.length === 8) {
-                let m = parseInt(val.substring(0, 2)) - 1;
-                let d = parseInt(val.substring(2, 4));
+            if (val.length === 6 || val.length === 8) {
+                let m = parseInt(val.substring(0, 2), 10) - 1;
+                let d = parseInt(val.substring(2, 4), 10);
                 let yStr = val.substring(4);
-                let y = parseInt(yStr);
-                let dateObj = new Date(y, m, d);
-                if (!isNaN(dateObj.getTime())) {
-                    lcCurrentDate = dateObj;
-                    lcRender();
+                let y = (yStr.length === 2) ? (2000 + parseInt(yStr, 10)) : parseInt(yStr, 10);
+                if (m >= 0 && m <= 11 && d >= 1 && d <= 31) {
+                    let dateObj = new Date(y, m, d, 12, 0, 0);
+                    if (!isNaN(dateObj.getTime()) && dateObj.getMonth() === m) {
+                        lcCurrentDate = dateObj;
+                        lcRender();
+                    }
                 }
             }
         }
@@ -8638,21 +9119,102 @@ closeLoanCalendar();
             let inputVal = document.getElementById('lc-manual-input').value;
             if (inputVal) {
                 let parts = inputVal.split('/');
-                if (parts.length === 3) {
-                    let m = parseInt(parts[0]) - 1;
-                    let d = parseInt(parts[1]);
+                if (parts.length === 3 && (parts[2].length === 2 || parts[2].length === 4)) {
+                    let m = parseInt(parts[0], 10) - 1;
+                    let d = parseInt(parts[1], 10);
                     let yStr = parts[2];
-                    let y = yStr.length === 4 ? parseInt(yStr) : 2000 + parseInt(yStr);
-                    let dateObj = new Date(y, m, d);
-                    if (!isNaN(dateObj.getTime())) {
-                        lcSelectDate(`${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
-                        return;
+                    let y = yStr.length === 4 ? parseInt(yStr, 10) : (2000 + parseInt(yStr, 10));
+                    if (m >= 0 && m <= 11 && d >= 1 && d <= 31) {
+                        let dateObj = new Date(y, m, d, 12, 0, 0);
+                        if (!isNaN(dateObj.getTime()) && dateObj.getMonth() === m) {
+                            lcSelectDate(`${y}-${String(m + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`);
+                            return;
+                        }
                     }
                 }
-                alert("Please enter a valid date in MM/DD/YYYY format.");
+                alert("Please enter a valid date in MM/DD/YY format.");
             } else {
                 closeLoanCalendar();
             }
+        }
+
+        function checkBaselineCompletionReconciliation(closedCheckId) {
+            let baseN = parseInt(ytdBaseline.cnt) || 0;
+            if (baseN <= 0 || closedCheckId > baseN) return false;
+            let closedData = ledgerData[closedCheckId];
+            if (!closedData || !closedData.inputs || !closedData.inputs['verified-toggle']) return false;
+
+            let sub = computeVerifiedBaselineSubtractor(baseN);
+            if (sub.cnt < baseN) return false;
+
+            let diffGross = r2(sub.gross - (ytdBaseline.gross || 0));
+            let diffNet = r2(sub.net - (ytdBaseline.net || 0));
+            let diffHrs = r2(sub.hrs - (ytdBaseline.hrs || 0));
+
+            if (Math.abs(diffGross) <= 0.01 && Math.abs(diffNet) <= 0.01 && Math.abs(diffHrs) <= 0.01) {
+                ytdBaseline.reconcileMode = 'verified_sum';
+                masterYtdSilos[currentYear] = ytdBaseline;
+                saveSettings();
+                renderYTD();
+                renderDashboard();
+                showToast(`All ${baseN} Baseline Checks Verified & Reconciled!`);
+                return false;
+            }
+
+            if (ytdBaseline.reconcileMode === 'ignore_mismatch') return false;
+
+            let m = document.getElementById('custom-modal');
+            let msgEl = document.getElementById('modal-msg');
+            let dynInputs = document.getElementById('modal-dynamic-inputs');
+            let btnYes = document.getElementById('modal-yes');
+            let btnNo = document.getElementById('modal-no');
+            let btnOk = document.getElementById('modal-ok');
+            let btnCancel = document.getElementById('modal-cancel');
+            let btnUupAll = document.getElementById('modal-uup-all');
+            let btnUupFut = document.getElementById('modal-uup-future');
+            let btnUupCan = document.getElementById('modal-uup-cancel');
+
+            if (!m || !msgEl) return false;
+            dynInputs.style.display = 'none';
+            btnOk.style.display = 'none';
+            btnCancel.style.display = 'none';
+            if (btnUupAll) btnUupAll.style.display = 'none';
+            if (btnUupFut) btnUupFut.style.display = 'none';
+            if (btnUupCan) btnUupCan.style.display = 'none';
+
+            const fmtDelta = (n, isCurrency = true) => {
+                let sign = n > 0 ? '+' : '';
+                return sign + (isCurrency ? f(n) : n.toFixed(2) + 'h');
+            };
+
+            msgEl.innerHTML = `⚠️ YTD BASELINE DISCREPANCY ⚠️\n\nAll ${baseN} baseline checks are now physically verified, and their sum differs from your Starting YTD entry:\n\n• Gross Δ: ${fmtDelta(diffGross)}\n• Net Δ: ${fmtDelta(diffNet)}\n• Hours Δ: ${fmtDelta(diffHrs, false)}\n\nReview Checks #1–#${baseN}, or Ignore and keep your original Starting YTD figures as the master total?`;
+
+            btnYes.innerText = 'REVIEW';
+            btnNo.innerText = 'IGNORE';
+            btnYes.style.display = 'flex';
+            btnNo.style.display = 'flex';
+
+            btnYes.onclick = () => {
+                btnYes.innerText = 'YES';
+                btnNo.innerText = 'NO';
+                m.style.display = 'none';
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+
+            btnNo.onclick = () => {
+                btnYes.innerText = 'YES';
+                btnNo.innerText = 'NO';
+                ytdBaseline.reconcileMode = 'ignore_mismatch';
+                masterYtdSilos[currentYear] = ytdBaseline;
+                saveSettings();
+                m.style.display = 'none';
+                renderYTD();
+                renderDashboard();
+                showToast('Original Starting YTD locked as Master Total');
+            };
+
+            m.style.display = 'flex';
+            return true;
         }
 
         function switchTheme(mode) {
@@ -8675,13 +9237,36 @@ closeLoanCalendar();
             if (document.getElementById('settings-view').style.display === 'block') return;
             setTimeout(() => {
                 let cards = document.querySelectorAll('.pay-card');
+                if (!cards.length) return;
+                let highestPhysicallyVerified = 0;
+                for (const [id, data] of Object.entries(ledgerData)) {
+                    if (data && data.inputs && data.inputs['verified-toggle']) {
+                        let num = parseInt(id, 10);
+                        if (num > highestPhysicallyVerified) highestPhysicallyVerified = num;
+                    }
+                }
+                let baselineCount = parseInt(ytdBaseline.cnt, 10) || 0;
+                let skipCount = Math.max(highestPhysicallyVerified, baselineCount);
                 let target = null;
-                for (let c of cards) { if (!c.classList.contains('verified')) { target = c; break; } }
+                for (let i = skipCount; i < cards.length; i++) {
+                    if (!cards[i].classList.contains('verified') && !cards[i].classList.contains('simulated')) {
+                        target = cards[i];
+                        break;
+                    }
+                }
+                if (!target) {
+                    for (let c of cards) {
+                        if (!c.classList.contains('verified') && !c.classList.contains('simulated')) {
+                            target = c;
+                            break;
+                        }
+                    }
+                }
                 if (target) {
                     let headerOffset = 135;
                     let elementPosition = target.getBoundingClientRect().top;
                     let offsetPosition = elementPosition + window.scrollY - headerOffset;
-                    window.scrollTo({ top: offsetPosition, behavior: "smooth" });
+                    window.scrollTo({ top: Math.max(0, offsetPosition), behavior: "smooth" });
                 }
             }, 100);
         }
@@ -8806,17 +9391,17 @@ closeLoanCalendar();
                         }
 
                         let w1End = new Date(pStart);
-w1End.setDate(w1End.getDate() + 6);
-w1End.setHours(23, 59, 59, 999);
-let w2Start = new Date(pStart);
-w2Start.setDate(w2Start.getDate() + 7);
-w2Start.setHours(0, 0, 0, 0);
-let w1Covers = (w1End >= retroDate);
-let w2Covers = (pEnd >= retroDate && retroDate > pStart);
-let focusWeek = (pStart >= retroDate) ? 0 : (!w1Covers && w2Covers ? 2 : 0);
+                        w1End.setDate(w1End.getDate() + 6);
+                        w1End.setHours(23, 59, 59, 999);
+                        let w2Start = new Date(pStart);
+                        w2Start.setDate(w2Start.getDate() + 7);
+                        w2Start.setHours(0, 0, 0, 0);
+                        let w1Covers = (w1End >= retroDate);
+                        let w2Covers = (pEnd >= retroDate && retroDate > pStart);
+                        let focusWeek = (pStart >= retroDate) ? 0 : (!w1Covers && w2Covers ? 2 : 0);
 
-let checkRetro = 0;
-let checkLog = { id: p.id, dateStr: p.payDate, amt: 0, focusWeek: focusWeek, classes: {} };
+                        let checkRetro = 0;
+                        let checkLog = { id: p.id, dateStr: p.payDate, amt: 0, focusWeek: focusWeek, classes: {} };
 
                         const applyDelta = (lvl, h, mult, dayDateObj, payType) => {
                             if (dayDateObj < retroDate) return;
@@ -8905,21 +9490,21 @@ let checkLog = { id: p.id, dateStr: p.payDate, amt: 0, focusWeek: focusWeek, cla
                             }
 
                             let wkRetroGenerated = checkRetro - prevCheckRetro;
-if (wkRetroGenerated > 0) {
-if (w === 1) checkLog.hasW1Retro = true;
-if (w === 2) checkLog.hasW2Retro = true;
-}
-let incRetro = wkRetroGenerated * bPct;
-if (incRetro > 0) {
-checkLog.incRetro = (checkLog.incRetro || 0) + incRetro;
-}
-checkRetro += incRetro;
-}
-if (pStart < retroDate) {
-if (checkLog.hasW1Retro && !checkLog.hasW2Retro) checkLog.focusWeek = 1;
-else if (!checkLog.hasW1Retro && checkLog.hasW2Retro) checkLog.focusWeek = 2;
-else if (checkLog.hasW1Retro && checkLog.hasW2Retro) checkLog.focusWeek = 0;
-}
+                            if (wkRetroGenerated > 0) {
+                                if (w === 1) checkLog.hasW1Retro = true;
+                                if (w === 2) checkLog.hasW2Retro = true;
+                            }
+                            let incRetro = wkRetroGenerated * bPct;
+                            if (incRetro > 0) {
+                                checkLog.incRetro = (checkLog.incRetro || 0) + incRetro;
+                            }
+                            checkRetro += incRetro;
+                        }
+                        if (pStart < retroDate) {
+                            if (checkLog.hasW1Retro && !checkLog.hasW2Retro) checkLog.focusWeek = 1;
+                            else if (!checkLog.hasW1Retro && checkLog.hasW2Retro) checkLog.focusWeek = 2;
+                            else if (checkLog.hasW1Retro && checkLog.hasW2Retro) checkLog.focusWeek = 0;
+                        }
 
                         checkLog.amt = checkRetro;
                         if (checkRetro > 0) {
@@ -8937,23 +9522,23 @@ else if (checkLog.hasW1Retro && checkLog.hasW2Retro) checkLog.focusWeek = 0;
             }
 
             renderRetroUI(totalBackpayOwed);
-}
+        }
 
-function renderRetroUI(amt) {
+        function renderRetroUI(amt) {
             pendingBackpayAmt = amt;
             let container = document.getElementById('retro-breakdown-container');
 
             let html = `
-                <div style="text-align:center; margin-bottom:15px; cursor:pointer;" onclick="document.getElementById('retro-details-list').classList.toggle('show');">
-                    <div style="font-size:11px; color:var(--dim); font-weight:bold; letter-spacing:1px; margin-bottom:5px;">TOTAL CALCULATED BACKPAY</div>
-                    <div style="font-size:32px; font-weight:900; color:var(--success); font-family:monospace; margin-bottom:5px;">${f(amt)}</div>
-                    <div style="font-size:10px; color:var(--accent);">TAP TO VIEW AUDIT BREAKDOWN ▼</div>
-                </div>
-                <div id="retro-details-list" class="collapsible-content" style="flex-direction:column; gap:10px; margin-bottom:15px; max-height: 400px; overflow-y:auto; border:1px solid #333; padding:10px; border-radius:6px; background:#111;">
-            `;
+<div style="text-align:center; margin-bottom:15px; cursor:pointer;" onclick="document.getElementById('retro-details-list').classList.toggle('show');">
+<div style="font-size:11px; color:var(--dim); font-weight:bold; letter-spacing:1px; margin-bottom:5px;">TOTAL CALCULATED BACKPAY</div>
+<div style="font-size:32px; font-weight:900; color:var(--success); font-family:monospace; margin-bottom:5px;">${f(amt)}</div>
+<div style="font-size:10px; color:var(--accent);">TAP TO VIEW AUDIT BREAKDOWN ▼</div>
+</div>
+<div id="retro-details-list" class="collapsible-content" style="flex-direction:column; gap:10px; margin-bottom:15px;">
+`;
 
             window.retroAuditLog.forEach(entry => {
-html += `<div id="retro-card-c${entry.log.id}" style="background:#1e1e1e; border:1px solid #444; border-radius:6px; padding:10px;">
+                html += `<div id="retro-card-c${entry.log.id}" style="background:#1e1e1e; border:1px solid #444; border-radius:6px; padding:10px;">
 <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; font-size:12px; font-weight:bold; color:var(--accent); margin-bottom:5px; border-bottom:1px dashed #444; padding-bottom:6px;">
 <span>Check #${entry.log.id} (${entry.log.dateStr}) - ${f(entry.log.amt)}</span>
 <button onclick="viewCheckFromRetro(${entry.log.id}, ${entry.log.focusWeek || 0})" style="background:rgba(77, 173, 255, 0.12); color:var(--accent); border:1px solid var(--accent); border-radius:4px; padding:3px 8px; font-size:10px; font-weight:900; font-family:monospace; cursor:pointer; white-space:nowrap; flex-shrink:0;">VIEW CHECK</button>
@@ -9106,25 +9691,25 @@ html += `<div id="retro-card-c${entry.log.id}" style="background:#1e1e1e; border
             };
 
             let checkNum = parseInt(pid);
-if (parseInt(targetYear) === parseInt(currentYear)) {
-if (!ledgerData[checkNum]) ledgerData[checkNum] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
-if (!ledgerData[checkNum].adjustments) ledgerData[checkNum].adjustments = [];
-ledgerData[checkNum].adjustments.push(newAdj);
-localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData));
-showToast(`${label} injected into Check #${checkNum}!`, () => openRoutedAdjustmentFromToast(currentYear, checkNum, uid));
-if (currentPeriodId == checkNum) {
-saveAndClose();
-openPeriod(checkNum);
-}
-} else {
-let targetKey = `ledger_${targetYear}_final`;
-let remoteLedger = JSON.parse(localStorage.getItem(targetKey) || '{}');
-if (!remoteLedger[checkNum]) remoteLedger[checkNum] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
-if (!remoteLedger[checkNum].adjustments) remoteLedger[checkNum].adjustments = [];
-remoteLedger[checkNum].adjustments.push(newAdj);
-localStorage.setItem(targetKey, JSON.stringify(remoteLedger));
-showToast(`${label} injected into ${targetYear} Check #${checkNum}!`, () => openRoutedAdjustmentFromToast(targetYear, checkNum, uid));
-}
+            if (parseInt(targetYear) === parseInt(currentYear)) {
+                if (!ledgerData[checkNum]) ledgerData[checkNum] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
+                if (!ledgerData[checkNum].adjustments) ledgerData[checkNum].adjustments = [];
+                ledgerData[checkNum].adjustments.push(newAdj);
+                localStorage.setItem(`ledger_${currentYear}_final`, JSON.stringify(ledgerData));
+                showToast(`${label} injected into Check #${checkNum}!`, () => openRoutedAdjustmentFromToast(currentYear, checkNum, uid));
+                if (currentPeriodId == checkNum) {
+                    saveAndClose();
+                    openPeriod(checkNum);
+                }
+            } else {
+                let targetKey = `ledger_${targetYear}_final`;
+                let remoteLedger = JSON.parse(localStorage.getItem(targetKey) || '{}');
+                if (!remoteLedger[checkNum]) remoteLedger[checkNum] = { gross: 0, net: 0, inputs: {}, breakdown: {}, breakdownHrs: {}, deductions: {}, adjustments: [] };
+                if (!remoteLedger[checkNum].adjustments) remoteLedger[checkNum].adjustments = [];
+                remoteLedger[checkNum].adjustments.push(newAdj);
+                localStorage.setItem(targetKey, JSON.stringify(remoteLedger));
+                showToast(`${label} injected into ${targetYear} Check #${checkNum}!`, () => openRoutedAdjustmentFromToast(targetYear, checkNum, uid));
+            }
         }
 
         function exportData(method) {
@@ -10005,10 +10590,16 @@ showToast(`${label} injected into ${targetYear} Check #${checkNum}!`, () => open
                 if (!isPS) {
                     let drawer = document.getElementById(`exp-drawer-${uid}`);
                     let btn = card.querySelector('.express-btn');
-                    drawer.classList.remove('show');
+                    let wasExpress = drawer && drawer.classList.contains('show');
+                    if (drawer) drawer.classList.remove('show');
                     if (btn) {
-                        btn.classList.remove('active');
-                        btn.innerHTML = 'EXPRESS ▼';
+                        if (wasExpress) {
+                            btn.classList.add('active');
+                            btn.innerHTML = 'ADJ▲';
+                        } else {
+                            btn.classList.remove('active');
+                            btn.innerHTML = 'ADJ▼';
+                        }
                     }
                 } else {
                     card.querySelectorAll('input').forEach(i => i.blur());
@@ -10121,12 +10712,20 @@ showToast(`${label} injected into ${targetYear} Check #${checkNum}!`, () => open
             </div>
             <hr style="border: 0; border-bottom: 1px dashed #333; margin: 0 0 8px 0;">`;
 
+            let gOvVal = data && data.grossOverride !== undefined && data.grossOverride !== null ? data.grossOverride : '';
+            let nOvVal = data && data.netOverride !== undefined && data.netOverride !== null ? data.netOverride : '';
             let summaryBar = `
-            <div style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px;">
-                <div style="font-family: monospace; font-weight: bold; font-size: 14px; color: #fff;">
-                    Gross: <span id="exp-gross-${uid}">$0.00</span> <span style="color:#555; margin:0 8px;">|</span> Net: <span id="exp-net-${uid}" style="color:var(--success);">$0.00</span>
-                </div>
-            </div>`;
+<div style="display: flex; justify-content: center; align-items: center; margin-bottom: 8px; user-select: none; -webkit-user-select: none; -webkit-touch-callout: none;">
+<div style="font-family: monospace; font-weight: bold; font-size: 14px; color: #fff; display:flex; align-items:center; flex-wrap:wrap; justify-content:center; gap:4px;">
+<span>Gross:</span>
+<span id="exp-gross-${uid}" style="cursor:pointer; text-decoration:underline dotted #888;" onmousedown="startOvHold('${uid}','gross')" onmouseup="endOvHold()" onmouseleave="endOvHold()" ontouchstart="startOvHold('${uid}','gross')" ontouchend="endOvHold()">$0.00</span>
+<input type="number" step="0.01" id="ov-gross-in-${uid}" class="ps-gross-ov" value="${gOvVal}" placeholder="Gross $" style="display:none; width:92px; margin:0; padding:2px 4px; font-size:12px; font-family:monospace; color:var(--gold); background:#000; border:1px solid var(--gold); border-radius:4px; text-align:right;" onchange="saveAdjustments()" onkeydown="if(event.key==='Enter'){this.blur();}">
+<span style="color:#555; margin:0 6px;">|</span>
+<span>Net:</span>
+<span id="exp-net-${uid}" style="color:var(--success); cursor:pointer; text-decoration:underline dotted var(--success);" onmousedown="startOvHold('${uid}','net')" onmouseup="endOvHold()" onmouseleave="endOvHold()" ontouchstart="startOvHold('${uid}','net')" ontouchend="endOvHold()">$0.00</span>
+<input type="number" step="0.01" id="ov-net-in-${uid}" class="ps-net-ov" value="${nOvVal}" placeholder="Net $" style="display:none; width:92px; margin:0; padding:2px 4px; font-size:12px; font-family:monospace; color:var(--success); background:#000; border:1px solid var(--success); border-radius:4px; text-align:right;" onchange="saveAdjustments()" onkeydown="if(event.key==='Enter'){this.blur();}">
+</div>
+</div>`;
 
             let controlsBar = `
             <div style="display: flex; justify-content: center; align-items: center; gap: 8px; margin-bottom: 10px; width: 100%;">
@@ -10178,20 +10777,20 @@ showToast(`${label} injected into ${targetYear} Check #${checkNum}!`, () => open
                     let hrsVal = hrsEl ? (parseFloat(hrsEl.value) || 0) : 0;
 
                     if (isPS && uid.startsWith('ps-auto-')) {
-let match = uid.match(/^ps-auto-(?:(\d{4})-)?q(\d)$/);
-if (match) {
-let srcYear = match[1] ? parseInt(match[1]) : currentYear;
-let qNum = match[2];
-if (srcYear === currentYear) {
-let manInput = document.getElementById(`ps-man-q${qNum}`);
-let currentManVal = manInput ? parseFloat(manInput.value) || 0 : 0;
-if (manInput && currentManVal !== hrsVal) {
-manInput.value = hrsVal > 0 ? hrsVal : "";
-psSyncNeeded = true;
-}
-}
-}
-}
+                        let match = uid.match(/^ps-auto-(?:(\d{4})-)?q(\d)$/);
+                        if (match) {
+                            let srcYear = match[1] ? parseInt(match[1]) : currentYear;
+                            let qNum = match[2];
+                            if (srcYear === currentYear) {
+                                let manInput = document.getElementById(`ps-man-q${qNum}`);
+                                let currentManVal = manInput ? parseFloat(manInput.value) || 0 : 0;
+                                if (manInput && currentManVal !== hrsVal) {
+                                    manInput.value = hrsVal > 0 ? hrsVal : "";
+                                    psSyncNeeded = true;
+                                }
+                            }
+                        }
+                    }
 
                     let isFlat = card.querySelector('.ps-flat-gross') !== null;
                     let flatAmt = isFlat ? parseFloat(card.querySelector('.ps-flat-gross').value) : undefined;
@@ -10209,6 +10808,8 @@ psSyncNeeded = true;
                         incPct: (isPS || isFlat) ? 0 : (parseFloat(card.querySelector('.ps-inc')?.value) || 0),
                         xtra: (isPS || isFlat) ? false : (card.querySelector('.ps-xtra') ? card.querySelector('.ps-xtra').checked : false),
                         express: isExpress,
+                        grossOverride: (card.querySelector('.ps-gross-ov') && card.querySelector('.ps-gross-ov').value !== '') ? parseFloat(card.querySelector('.ps-gross-ov').value) : null,
+                        netOverride: (card.querySelector('.ps-net-ov') && card.querySelector('.ps-net-ov').value !== '') ? parseFloat(card.querySelector('.ps-net-ov').value) : null,
                         verified: card.querySelector('.ps-verify').checked,
                         tax401k: parseFloat(card.querySelector('.ps-tax-401k').value) || 0,
                         taxFed: parseFloat(card.querySelector('.ps-tax-fed').value) || 0,
